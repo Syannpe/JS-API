@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // 创建一个处理字节数据的可读流
+        const byteStream = new ReadableStream({
+            start(controller) {
+                // 初始化流的源头
+                controller.enqueue(new Uint8Array([0x01, 0x02, 0x03]));
+                controller.close(); // 关闭流
+            },
+            type: 'bytes'
+        });
+
+        // 附着一个读取器
+        const reader = byteStream.getReader();
+
+        // 读取流中的数据
+        reader.read().then(({done, value}) => {
+            if (!done) {
+                // value 是一个 Uint8Array，包含流中的数据
+                console.log('读取到的字节数据：', value);
+            } else {
+                console.log('流已经关闭。');
+            }
+        }).catch((error) => {
+            console.error('读取流时出错：', error);
+        });
+
+
+    })
+</script>
+</body>
+</html>

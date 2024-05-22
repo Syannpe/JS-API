@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // 假设我们有一个socket对象，它有一个readInto方法可以将数据读入一个ArrayBuffer
+        /**
+         * 一个模拟的socket对象，包含一个`readInto`方法用于从数据源读取数据到给定的缓冲区。
+         * 在实际应用中，你需要根据你的数据源来实现这个方法。
+         */
+        const socket = {
+            /**
+             * 读取数据到指定的缓冲区。
+             * 此示例简单地填充缓冲区的前几个字节，并返回实际读取的字节数。
+             * @param {ArrayBuffer} buffer - 目标缓冲区。
+             * @param {number} byteOffset - 在缓冲区中开始读取的字节偏移量。
+             * @param {number} byteLength - 想要读取的字节数。
+             *
+             * @returns {number} 实际读取并写入到缓冲区的字节数。
+             */
+            readInto(buffer, byteOffset, byteLength) {
+                // 这里应该是一些实际的读取操作，为了示例，我们只是简单地返回读取的字节数
+                // 实际应用中，你需要根据你的数据源来实现这个方法
+                const bytesRead = Math.min(byteLength, 1024); // 假设我们每次最多读取1024字节
+                const data = new Uint8Array(buffer, byteOffset, bytesRead);
+                // 填充数据到data中
+                for (let i = 0; i < bytesRead; i++) {
+                    data[i] = i % 256; // 示例数据
+                }
+                return bytesRead; // 返回实际读取的字节数
+            }
+        };
+
+        // 创建一个可读流，其底层数据源是上面定义的socket
+        const stream = new ReadableStream({
+            type: 'bytes',
+            // autoAllocateChunkSize: 1024,
+            pull(controller) {
+                // 当流需要更多数据时，会调用这个pull方法
+                console.log(controller.byobRequest)
+                if (controller.byobRequest) {
+                    const view = controller.byobRequest.view;
+                    const bytesRead = socket.readInto(view.buffer, view.byteOffset, view.byteLength);
+                    controller.byobRequest.respond(bytesRead);
+                }else{
+                    controller.enqueue(new Uint8Array([1, 2, 3]));
+                }
+            }
+        });
+
+        /*
+        * 也可以使用默认读取器 (ReadableStreamDefaultReader) 读取可读字节流，
+        * 但在这种情况下，仅当为流启用自动缓冲区分配（为流的底层源设置了 autoAllocateChunkSize）时
+        * 才会创建 byobRequest 对象。
+        * 请注意，在这种情况下，autoAllocateChunkSize 指示的大小用于缓冲区大小；
+        * 对于字节读取器，所使用的缓冲区由消费者提供。
+        * 如果未指定该属性，默认读取器仍将“工作”，
+        * 但永远不会向底层源提供 byobRequest，
+        * 并且所有数据将通过流的内部队列传输。*/
+        const reader = stream.getReader();
+
+        for (let i = 0; i < 5; i++) {
+            const {done,value} = await reader.read();
+            console.log(value)
+        }
+    })
+</script>
+</body>
+</html>

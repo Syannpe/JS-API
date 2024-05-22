@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个CountQueuingStrategy实例，设置highWaterMark为1
+        const queuingStrategy = new CountQueuingStrategy({ highWaterMark: 1 });
+
+        // 创建一个WritableStream，使用上面定义的queuingStrategy
+        const writableStream = new WritableStream({
+            // 实现sink的write、close和abort方法
+            write(chunk) {
+                // 处理写入的数据块
+                console.log('Writing chunk:', chunk);
+            },
+            close() {
+                console.log('Stream closed');
+            },
+            abort(err) {
+                console.error('Stream aborted due to:', err);
+            }
+        }, queuingStrategy);
+
+        // 使用WritableStream
+        (async () => {
+            const writer = writableStream.getWriter();
+            await writer.write('data chunk');
+            await writer.close();
+        })();
+
+    })
+</script>
+</body>
+</html>

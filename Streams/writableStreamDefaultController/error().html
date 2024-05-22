@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // 创建一个新的WritableStream对象
+        const writableStream = new WritableStream({
+            start(controller) {
+                controller.error("My error is broken");
+            },
+            write(chunk, controller) {
+                console.log(`Received chunk: ${chunk}`);
+
+                if (chunk === "error") {
+                    controller.error("不知为何无法触发");
+                }
+            },
+            close() {
+                console.log('Stream closed');
+            },
+            abort(err) {
+                console.error('Stream aborted', err);
+            }
+        });
+
+        // 使用getWriter()方法获取WritableStreamDefaultWriter对象
+        const writer = writableStream.getWriter();
+
+        // 使用writer向流中写入数据
+        await writer.write("hello world");
+        await writer.write("error");
+
+    })
+</script>
+</body>
+</html>

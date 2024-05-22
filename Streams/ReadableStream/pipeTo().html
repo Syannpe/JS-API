@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pipeTo()</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个可读流（例如，从文件或网络获取数据）
+        const readableStream = new ReadableStream({
+            start(controller) {
+                // 在这里添加数据到流中
+                controller.enqueue('Hello, ');
+                controller.enqueue('world!');
+
+                // 结束流
+                controller.close();
+            }
+        });
+
+        // 创建一个可写流（例如，将数据写入文件或发送到服务器）
+        const writableStream = new WritableStream({
+            async write(chunk) {
+                // 在这里处理写入的数据（例如，将其保存到文件）
+                console.log('Received:', chunk);
+            }
+        });
+
+        // 将可读流通过转换器连接到可写流
+        readableStream.pipeTo(writableStream)
+            .then(() => {
+                console.log('Data processing complete.');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+    })
+</script>
+</body>
+</html>

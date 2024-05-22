@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ReadableStream()</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const stream = new ReadableStream({
+            start(controller) {
+                controller.enqueue("Hello, world!");
+                controller.close();
+            }
+        });
+
+        // 创建一个简单的ReadableStream，每秒生成一个随机字符串并将其入队
+        const randomStream = new ReadableStream({
+            start(controller) {
+                // 每秒生成并入队一个随机字符串
+                const interval = setInterval(() => {
+                    const randomString = Math.random().toString(36).substring(2, 10);
+                    controller.enqueue(randomString);
+                }, 1000);
+
+                // 当流被取消时，清除定时器
+                return () => clearInterval(interval);
+            },
+            pull(controller) {
+                // 可以根据需要添加更多数据到队列
+                if (controller.desiredSize > 0) {
+                    const additionalString = Math.random().toString(36).substring(2, 10);
+                    // controller.enqueue(additionalString);
+                }
+            },
+            cancel(reason) {
+                console.log('Stream cancelled:', reason);
+            }
+        });
+
+        // 读取数据
+        async function readStream() {
+            for await (const chunk of randomStream) {
+                console.log('Received from stream:', chunk);
+            }
+        }
+
+        readStream();
+
+
+    })
+</script>
+</body>
+</html>

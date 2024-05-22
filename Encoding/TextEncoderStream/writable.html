@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        const readableStream = new ReadableStream({
+            start(controller) {
+                controller.enqueue("hello world");
+                controller.close();
+            }
+        });
+
+        const textEncoderStream = new TextEncoderStream()
+        const stream = readableStream.pipeThrough({
+            readable: textEncoderStream.readable,
+            writable: textEncoderStream.writable
+        });
+        const reader = stream.getReader();
+        reader.read().then(function readCB({done, value}) {
+            if (!done) {
+                console.log(stream, value);
+                reader.read().then(readCB);
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

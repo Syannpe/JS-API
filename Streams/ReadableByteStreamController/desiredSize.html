@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个可读流，其底层数据源是一个字节源
+        const stream = new ReadableStream({
+            type: 'bytes',
+            start(controller) {
+                // 当流开始时，你可以在这里设置底层字节源
+
+                // 获取desiredSize属性
+                console.log(controller.desiredSize)
+
+                // 假设我们有一些二进制数据作为Uint8Array
+                const data = new Uint8Array([1, 2, 3, 4, 5]);
+
+                // 使用enqueue()方法将数据块放入流中
+                controller.enqueue(data);
+                // 再次获取desiredSize属性
+                console.log(controller.desiredSize)
+
+                // 当所有数据都已发送，可以关闭流
+                controller.close();
+            },
+            pull(controller) {
+                // 当消费者需要更多数据时，会调用此方法
+                // 你可以根据需要再次调用enqueue()或者如果没有更多数据，调用close()
+            },
+            cancel() {
+                // 如果消费者取消了流，你可以在这里执行清理操作
+            }
+        }, {highWaterMark: 1024});
+
+        // 使用getReader()方法创建一个读取器来消费流
+        const reader = stream.getReader();
+
+        // 读取流中的数据
+        reader.read().then(({value, done}) => {
+            if (done) {
+                console.log('流已经关闭');
+            } else {
+                console.log('从流中读取的数据:', value);
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    import {JSONParser} from "../../libs/JSONParser.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        const param = {
+            label: "utf-8",
+            options: {
+                fatal: true,
+                ignoreBOM: false
+            }
+        };
+
+        const jsonParser = new JSONParser(param);
+        jsonParser.defaultInit();
+
+        let readableStream = new ReadableStream({
+            start(controller) {
+                // controller.enqueue("\xEF\xBB\xBFHello, world! This is some invalid data: \x80\x81\x82\x83");
+                controller.enqueue(new Uint8Array([
+                    239, 187, 191, // BOM (Byte Order Mark)
+                    72, 101, 108, 108, 111, 44, 32, 119, 111, 114, 108, 100, 33, 32,
+                    84, 104, 105, 115, 32, 105, 115, 32, 115, 111, 109, 101, 32,
+                    105, 110, 118, 97, 115, 105, 99, 115, 32, 100, 97, 116, 97, 58,
+                    32, 128, 129, 130, 131
+                ]))
+                controller.close();
+            },
+            type: "bytes"
+        })
+
+        jsonParser.onjsonchange = async function () {
+            const textDecoderStream = new TextDecoderStream(this.json.label, this.json.options);
+            let stream;
+
+            [readableStream, stream] = readableStream.tee();
+            const res = await stream.pipeThrough({
+                readable: textDecoderStream.readable,
+                writable: textDecoderStream.writable
+            }).getReader().read();
+
+            console.log(res.value);
+
+        }
+    })
+</script>
+</body>
+</html>

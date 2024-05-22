@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        const writingStream = new WritableStream({
+            // Define the slow local sink to simulate a long operation
+            write(chunk, controller) {
+                return new Promise((resolve, reject) => {
+                    console.log(123 )
+                    controller.signal.addEventListener("abort", () =>
+                        reject(controller.signal.reason), console.log(controller.signal)
+                    );
+
+                    // Do nothing but wait with the data: it is a local sink
+                    setTimeout(resolve, 1000); // Timeout to simulate a slow operation
+                });
+            },
+        });
+
+        // Perform the write
+        const writer = writingStream.getWriter();
+        writer.write("Lorem ipsum test data");
+
+        // Abort the write manually
+        await writer.abort("Manual abort!");
+
+    })
+</script>
+</body>
+</html>

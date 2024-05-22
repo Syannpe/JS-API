@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    import {Console} from "../../../libs/Console.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        const con = new Console();
+        con.renderAsConsoleApp();
+
+        // 创建一个使用size方法来确定块大小的可读流
+        const sizeControlledStream = new ReadableStream({
+            start(controller) {
+                // 初始化流的源头
+                controller.enqueue('First chunk');
+                controller.enqueue('Second chunk');
+                // 更多的enqueue操作...
+            }
+        }, {
+            highWaterMark: 1,
+            size(chunk) {
+                con.output(chunk, chunk.length)
+                // 返回块的大小
+                return chunk.length;
+            }
+        });
+
+
+        for await (const chunk of sizeControlledStream) {
+            con.output(chunk);
+        }
+    })
+</script>
+</body>
+</html>

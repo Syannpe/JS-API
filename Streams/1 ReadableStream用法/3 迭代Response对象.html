@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个新的 Response 对象，其 body 是一个简单的字符串
+        const response = new Response('Hello, world!');
+
+        // 使用 for await...of 循环遍历 Response 对象的 body 属性
+        (async () => {
+            try {
+                for await (const chunk of response.body) {
+                    console.log(new TextDecoder().decode(chunk));
+                }
+            } catch (error) {
+                console.error('Error reading the stream', error);
+            } finally {
+            }
+        })();
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 假设我们有一个基于字节的数据源，比如一个文件或网络资源
+        const byteSource = {
+            // 数据源的起始函数
+            start(controller) {
+                // 初始化数据源，这里可以留空
+            },
+            // 当流需要更多数据时调用的函数
+            pull(controller) {
+                if (controller.desiredSize <= 0) {
+                    console.log(123)
+                    controller.close();
+                    return false;
+                }
+
+                // 检查是否有BYOB请求（Bring Your Own Buffer，自带缓冲区的请求）
+                console.log(controller.byobRequest)
+                if (controller.byobRequest) {
+                    // 假设我们有一些二进制数据填充到这个buffer中
+                    const buffer = new ArrayBuffer(512); // 创建一个1KB的buffer
+                    const view = new Uint8Array(buffer); // 创建一个视图来操作buffer
+
+                    // ...用数据填充view...
+                    for (let i = 0; i < 512; i++) {
+                        view[i] = i;
+                    }
+                    controller.enqueue(view);
+
+                    // 假设我们填充了512字节的数据
+                    const bytesFilled = 512;
+
+                    // 将填充的数据通过byobRequest响应给消费者
+                    controller.byobRequest.respond(bytesFilled);
+
+                } else {
+                    // 如果没有BYOB请求，我们可以使用enqueue()方法来添加数据到流的内部队列\
+                    console.log("没有BYOB请求，使用enqueue()方法添加数据到流的内部队列")
+                    const textEncoder = new TextEncoder();
+                    const chunk = textEncoder.encode("草");
+                    controller.enqueue(chunk);
+                }
+            },
+            // 数据源的关闭函数
+            close(controller) {
+                // 关闭流
+                controller.close();
+            },
+            type: "bytes"
+        };
+
+        // 创建一个可读流，指定类型为'bytes'以启用BYOB模式
+        const stream = new ReadableStream(byteSource, {highWaterMark: 1024});
+        // 获取一个BYOB阅读器
+        const reader = stream.getReader({mode: 'byob'});
+        const buffer = new Uint8Array(1024);
+        // 读取流中的数据
+        reader.read(buffer).then(({ value, done }) => {
+            if (!done) {
+                // 处理读取到的数据
+                console.log("读取到的数据：", value);
+            } else {
+                console.log("流已结束");
+            }
+        }).catch(error => {
+            console.error("读取数据时出错：", error);
+        });
+    })
+</script>
+</body>
+</html>
