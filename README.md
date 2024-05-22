@@ -1,2 +1,0 @@
-# JS-API
-JS API
