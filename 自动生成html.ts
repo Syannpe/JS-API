@@ -5,7 +5,7 @@ async function generateHTMLFile() {
     if (filename.toLowerCase() === "exit") {
         return;
     }
-
+/*
     let htmlContent = "";
     console.log("请输入HTML内容：（输入exit结束输入）：");
     while (true) {
@@ -24,7 +24,7 @@ async function generateHTMLFile() {
             break;
         }
         jsContent += line + "\n";
-    }
+    }*/
     const content = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -33,16 +33,17 @@ async function generateHTMLFile() {
     <style></style>
 </head>
 <body>
-${htmlContent}
+
 <script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function () {
-        ${jsContent}
+
     })
 </script>
 </body>
 </html>`;
 
     try {
+        // @ts-ignore
         await Deno.writeTextFile(`${filename}.html`, content);
         console.log(`已成功生成文件：${filename}.html`);
         await generateHTMLFile();
@@ -51,5 +52,5 @@ ${htmlContent}
     }
 }
 
-await generateHTMLFile();
+generateHTMLFile();
 //deno run --allow-write 自动生成html.ts

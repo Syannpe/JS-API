@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    navigator.serviceWorker.register("service-worker3.js").then(function (registration) {
+        console.log("Service worker registered");
+    }).catch(function (err) {
+        console.log(err);
+    });
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const requestBackgroundFetch = async function () {
+            const swRegistration = await navigator.serviceWorker.ready;
+            const fetchRegistration = await swRegistration.backgroundFetch.fetch(
+                "3 pics",
+                ["http://localhost:63342/JS%20API/0%20resource/pic1.png"],
+                {
+                    icons: [{
+                        src: "http://localhost:63342/JS%20API/0%20resource/icon512.png",
+                    }],
+                    title: "Downloading my pic",
+                    downloadTotal: 20 * 1024 * 1024,
+                },
+            );
+            console.log(fetchRegistration)
+        };
+
+        requestBackgroundFetch();
+    })
+</script>
+</body>
+</html>

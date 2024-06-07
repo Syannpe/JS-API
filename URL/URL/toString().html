@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+    </style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        const propertyTableBody = document.querySelector("tbody");
+        const properties = ["protocol", "username", "password", "hash", "host", "hostname", "href", "origin", "pathname", "port", "search", "searchParams"];
+
+        let url = new URL("http://username:password@example.com:63342/websocket-server.js?_ijt=e07qdah9batbg1t7eb9496ak94&_ij_reload&user=123#hash")
+
+
+        console.log(url.toString())
+
+    })
+</script>
+</body>
+</html>

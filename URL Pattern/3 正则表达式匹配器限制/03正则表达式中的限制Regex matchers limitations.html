@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        // ^在这里没啥用
+        let pattern = new URLPattern({pathname: '(^b)'});
+        console.log(pattern.test('https://example.com/ba')); // false
+        console.log(pattern.test('https://example.com/xa')); // false
+// with `^` in protocol
+        pattern = new URLPattern({protocol: '(^https?)'});
+        console.log(pattern.test('https://example.com/index.html')); // true
+        console.log(pattern.test('xhttps://example.com/index.html')); // false
+// without `^` in protocol
+        pattern = new URLPattern({protocol: '(https?)'});
+        console.log(pattern.test('https://example.com/index.html')); // true
+        console.log(pattern.test('xhttps://example.com/index.html')); // false
+
+        // $也没啥用
+// with `$` in pathname
+        pattern = new URLPattern({pathname: '(path$)'});
+        console.log(pattern.test('https://example.com/path')); // false
+        console.log(pattern.test('https://example.com/other')); // false
+// with `$` in hash
+        pattern = new URLPattern({hash: '(hash$)'});
+        console.log(pattern.test('https://example.com/#hash')); // true
+        console.log(pattern.test('xhttps://example.com/#otherhash')); // false
+// without `$` in hash
+        pattern = new URLPattern({hash: '(hash)'});
+        console.log(pattern.test('https://example.com/#hash')); // true
+        console.log(pattern.test('xhttps://example.com/#otherhash')); // false
+
+        // (?=)(?!)等类似的不匹配
+// lookahead
+        pattern = new URLPattern({pathname: '(a(?=b))'});
+        console.log(pattern.test('https://example.com/ab')); // false
+        console.log(pattern.test('https://example.com/ax')); // false
+// negative-lookahead
+        pattern = new URLPattern({pathname: '(a(?!b))'});
+        console.log(pattern.test('https://example.com/ab')); // false
+        console.log(pattern.test('https://example.com/ax')); // false
+// lookbehind
+        pattern = new URLPattern({pathname: '((?<=b)a)'});
+        console.log(pattern.test('https://example.com/ba')); // false
+        console.log(pattern.test('https://example.com/xa')); // false
+// negative-lookbehind
+        pattern = new URLPattern({pathname: '((?<!b)a)'});
+        console.log(pattern.test('https://example.com/ba')); // false
+        console.log(pattern.test('https://example.com/xa')); // false
+
+        // 这里的()需要转义
+        new RegExp('[()]'); // ok
+        new RegExp('[\\(\\)]'); // ok
+
+        new URLPattern({pathname: '([\\(\\)])'}); // ok
+        new URLPattern({pathname: '([()])'}); // throws
+    })
+</script>
+</body>
+</html>

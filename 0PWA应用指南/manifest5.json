@@ -1,0 +1,42 @@
+{
+  "name": "09 快捷方式",
+  "icons": [
+    {
+      "src": "../0 resource/kotone31024.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ],
+  "start_url": "http://localhost:63342/JS%20API/0PWA%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97/09%20%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F.html",
+  "display": "fullscreen",
+  "background_color": "peachpuff",
+  "theme_color": "peachpuff",
+  "shortcuts": [
+    {
+      "name": "主题色和背景色",
+      "url": "/JS%20API/0PWA应用指南/08%20主题色和背景色.html",
+      "short_name": "8",
+      "icons": [
+        {
+          "src": "../0 resource/kotone3256.png",
+          "type": "image/png",
+          "sizes": "256x256"
+        }
+      ],
+      "description": "主题色和背景色"
+    },
+    {
+      "name": "清单显示模式",
+      "url": "/JS%20API/0PWA应用指南/07%20清单显示模式.html",
+      "short_name": "7",
+      "icons": [
+        {
+          "src": "../0 resource/sora256.png",
+          "type": "image/png",
+          "sizes": "256x256"
+        }
+      ],
+      "description": "清单显示模式"
+    }
+  ]
+}

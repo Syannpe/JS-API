@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="manifest" href="manifest6.json"/>
+    <title>Title</title>
+    <style>
+        ul:empty::after {
+            content: "No files shared yet.";
+        }
+    </style>
+</head>
+<body>
+目前不好使，不知名错误
+这个程序在电脑上跑不了，准备在手机上跑，但是手机上无法下载PWA应用，所以弄一个Apache服务器静态发布，尽可能解决HTTPS的问题
+<ul id="file-list"></ul>
+
+<script type="module">
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker5.js').then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+        });
+    }
+
+    navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.type === 'SHARED_FILES') {
+            const files = event.data.files;
+            const fileList = document.getElementById('file-list');
+            fileList.innerHTML = '';
+
+            files.forEach(file => {
+                const li = document.createElement('li');
+                li.textContent = `${file.name} (${file.type}, ${file.size} bytes)`;
+                fileList.appendChild(li);
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+    })
+</script>
+</body>
+</html>

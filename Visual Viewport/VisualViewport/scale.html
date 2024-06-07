@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        :root {
+            height: 200vh;
+            width: 200vw;
+        }
+
+        table {
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+完善文档，研究案例，
+<table>
+    <caption>参数变化表格（在手机上效果更优）</caption>
+    <thead>
+    <tr>
+        <td>属性名</td>
+        <td>属性值</td>
+    </tr>
+    </thead>
+    <tbody id="propertyTableBody">
+    </tbody>
+</table>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        const propertyTableBody = document.querySelector("tbody");
+
+        const visualViewport = window.visualViewport;
+
+        const properties = ["offsetLeft", "offsetTop", "pageLeft", "pageTop", "scale", "width", "height"];
+
+        /*
+        * 监听 visualViewport 的 resize 和 scroll 事件，
+        * */
+        properties.forEach((property) => {
+            const row = document.createElement("tr");
+            const propNameCell = document.createElement("td");
+            const propValueCell = document.createElement("td");
+
+            propNameCell.textContent = property;
+            propValueCell.textContent = visualViewport[property];
+            propValueCell.id = property + "-value";
+
+            row.appendChild(propNameCell);
+            row.appendChild(propValueCell);
+
+            propertyTableBody.appendChild(row);
+        });
+
+        /*
+        * @description 渲染 visualViewport 的属性值
+        * */
+        const render = function () {
+            properties.forEach((property) => {
+                const containerEle = document.getElementById(property + "-value");
+                containerEle.textContent = visualViewport[property];
+            });
+        };
+
+        visualViewport.addEventListener("resize", render);
+        visualViewport.addEventListener("scroll", render);
+    })
+</script>
+</body>
+</html>

@@ -11,7 +11,8 @@
     document.addEventListener("DOMContentLoaded", function () {
         const stream = new ReadableStream();
         console.log(stream.locked); // 输出: false
-
+        stream.getReader();
+        console.log(stream.locked); // 输出: true
     })
 </script>
 </body>
