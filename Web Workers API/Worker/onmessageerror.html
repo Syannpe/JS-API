@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个新的Worker对象
+        const myWorker = new Worker('onmessageerror.js', {
+            type: 'module', // 指定Worker类型为module
+            credentials: 'same-origin', // 设置credentials为same-origin
+            name: 'exampleWorker' // 为Worker指定一个识别名
+        });
+
+        myWorker.onmessage = function(e) {
+            console.log('Message received from worker:', e.data);
+        };
+
+        // 监听错误事件
+        myWorker.onerror = function(e) {
+            console.error('Error occurred in worker:', e.message);
+        };
+
+        myWorker.onmessageerror = function(e) {
+            console.error('Message Error occurred in worker:', e.message);
+        }
+
+        const data = {
+            name: 'John',
+            age: 30,
+        };
+        data.ref = data;
+
+        // 使用postMessage向Worker发送消息
+        // myWorker.postMessage(data);
+
+
+        myWorker.postMessage(function (){}); // 发送不可序列化的消息
+        // myWorker.postMessage('{"name": "John", "age": 30}'); // 发送格式错误的消息
+        // myWorker.postMessage(new Array(1000000)); // 发送超出大小限制的消息
+        // 监听Worker发送回来的消息
+
+    })
+</script>
+</body>
+</html>

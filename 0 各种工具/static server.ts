@@ -4,7 +4,7 @@ import {serve} from "https://deno.land/std@0.193.0/http/server.ts";
 const getMimeTypeWithDir = function (dir: string): string {
     // deno-lint-ignore prefer-const
     let prefix: string = dir.substring(dir.lastIndexOf(".") + 1);
-    let mimeType = "";
+    let mimeType:string = "";
 
     switch (prefix) {
         case "html":
