@@ -6,12 +6,15 @@
  */
 const globalScope: SharedWorkerGlobalScope = self as any;
 
+const portSet:Set<MessagePort> = new Set();
+
 /*
  * 在Web Worker中添加事件监听器，以处理来自主线程的消息。
  */
 globalScope.onconnect = (e) => {
   const ports = e.ports;
   ports[ports.length - 1].start();
+  portSet.add(ports[ports.length - 1]);
 
   /*
    * 在Web Worker中添加事件监听器，以处理来自主线程的消息。
@@ -20,6 +23,11 @@ globalScope.onconnect = (e) => {
   ports[ports.length - 1].addEventListener(
     "message",
     function (e: MessageEvent) {
+      if(e.data.includes("error")){
+          console.error("error")
+          throw new Error("error");
+      }
+
       console.log("Message received from main script", e.data);
       ports[ports.length - 1].postMessage(e.data);
     },
