@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", async function () {
+        const stream1 = new ReadableStream({
+            start(controller) {
+                controller.enqueue("hello world")
+                controller.close()
+            }
+        });
+        const stream2 = new ReadableStream({
+            start(controller) {
+                controller.enqueue("hello world")
+                controller.close()
+            }
+        });
+        const stream3 = new ReadableStream({
+            start(controller) {
+                controller.enqueue("hello world")
+                controller.close()
+            }
+        });
+
+        const decompressionStream1 = stream1.pipeThrough(new TextEncoderStream()).pipeThrough(new CompressionStream("gzip"));
+        const decompressionStream2 = stream2.pipeThrough(new TextEncoderStream()).pipeThrough(new CompressionStream("deflate"));
+        const decompressionStream3 = stream3.pipeThrough(new TextEncoderStream()).pipeThrough(new CompressionStream("deflate-raw"));
+
+
+        decompressionStream1.pipeThrough(new DecompressionStream("gzip")).pipeThrough(new TextDecoderStream()).getReader().read().then(({
+                                                                                                                                            done,
+                                                                                                                                            value
+                                                                                                                                        }) => {
+            console.log("gzip解码", value)
+        });
+        decompressionStream2.pipeThrough(new DecompressionStream("deflate")).pipeThrough(new TextDecoderStream()).getReader().read().then(({
+                                                                                                                                               done,
+                                                                                                                                               value
+                                                                                                                                           }) => {
+            console.log("deflate解码", value)
+        });
+        decompressionStream3.pipeThrough(new DecompressionStream("deflate-raw")).pipeThrough(new TextDecoderStream()).getReader().read().then(({
+                                                                                                                                                   done,
+                                                                                                                                                   value
+                                                                                                                                               }) => {
+            console.log("deflate-raw解码", value)
+        });
+    })
+</script>
+</body>
+</html>

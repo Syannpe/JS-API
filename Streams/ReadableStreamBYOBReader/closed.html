@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        let readableStreamBYOBReader = null;
+        fetch("./待读取文件.txt")
+            .then(response => response.body)
+            .then(readableStream => {
+                readableStreamBYOBReader = readableStream.getReader({mode: "byob"})
+                return readableStreamBYOBReader;
+            })
+            .then(rsbr => rsbr.read(new Uint8Array(new ArrayBuffer(1024 * 1024 * 20))))
+            .then(({value, done}) => {
+                if (done) {
+                    console.log('流已经结束');
+                } else {
+                    const textDecoder = new TextDecoder();
+                    console.log('读取到的数据：', textDecoder.decode(value));
+                }
+                return readableStreamBYOBReader.closed
+            }).then(_ => {
+                console.log('流已经关闭');
+            })
+
+            .catch(error => {
+                console.error('读取过程中发生错误：', error);
+            })
+
+
+    })
+</script>
+</body>
+</html>

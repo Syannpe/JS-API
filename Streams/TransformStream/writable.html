@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个 TransformStream 实例
+        const myTransformStream = new TransformStream({
+            transform(chunk, controller) {
+                // 在这里可以对 chunk 进行处理
+                controller.enqueue(chunk);
+                console.log(chunk)
+            },
+        });
+
+        // 获取 TransformStream 的 writable 属性
+        const writableStream = myTransformStream.writable;
+
+        // 创建一个 Writer 来写入数据
+        const writer = writableStream.getWriter();
+
+        // 写入数据到 TransformStream
+        writer.write('Hello, World!').then(() => {
+            console.log('数据已写入');
+        });
+
+        // 关闭 Writer
+        writer.close().then(() => {
+            console.log('Writer 已关闭');
+        });
+
+
+    })
+</script>
+</body>
+</html>

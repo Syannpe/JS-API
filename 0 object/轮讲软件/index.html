@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+    </style>
+    <link rel="stylesheet" href="./default-stylesheet.css"/>
+</head>
+<body>
+<h1>用于文本到图像人物检索的跨模态自适应双重关联</h1>
+<hr/>
+<h1>摘要</h1>
+<h2>引言</h2>
+<details is="c-details" open>
+    <summary>引言</summary>
+    <p>解决<strong>文本到图像的人员检索</strong>问题的关键在于建立两种模态之间的对应关系
+        早期的方法采用了全局匹配技术来拉近图像及其对应的文本，缺点是此方法侧重于最显著的特征
+        最近的研究集中于探索两种模态之间更详细的对应关系，例如图像块和文字以及学习局部特征，缺点在于详细对应关系的复杂性
+    </p>
+</details>
+<script type="module">
+
+    customElements.define("c-details", class extends HTMLDetailsElement {
+        defaultClickDB() {
+            if (!this.open) {
+                this.onanimationend = null;
+                return;
+            }
+
+            //当正要关闭的时候
+            this.open = true;
+            this.onanimationend = () => {
+                this.open = false;
+                this.onanimationend = null;
+            }
+            setTimeout(function (that) {
+                console.log(that.open)
+            }, 1000, this)
+        }
+
+        constructor() {
+            super();
+            this.style.setProperty("--open-height", this.getBoundingClientRect().height + "px");
+            this.open = false;
+            // console.log(getComputedStyle(this).height);
+            this.style.setProperty("--close-height", getComputedStyle(this).height);
+
+            this.addEventListener("click", this.defaultClickDB.bind(this));
+        }
+    }, {extends: 'details'})
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+    })
+</script>
+</body>
+</html>

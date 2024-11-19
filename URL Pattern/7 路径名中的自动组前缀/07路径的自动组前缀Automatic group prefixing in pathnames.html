@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 正常匹配，如果有/就算匹配不上
+        const pattern = new URLPattern('/books/:id?', 'https://example.com');
+        console.log(pattern.test('https://example.com/books/123')); // true
+        console.log(pattern.test('https://example.com/books')); // true
+        console.log(pattern.test('https://example.com/books/')); // false
+
+        // 也是正常匹配，但就是匹配次数多一些
+        const pattern2 = new URLPattern('/books/:id+', 'https://example.com');
+        console.log(pattern2.test('https://example.com/books/123')); // true
+        console.log(pattern2.test('https://example.com/books/123/456')); // true
+        console.log(pattern2.test('https://example.com/books/123/')); // false
+        console.log(pattern2.test('https://example.com/books/123/456/')); // false
+
+        // 如果单独匹配hash一部分，则会忽略/
+        const pattern3 = new URLPattern({ hash: '/books/:id?' });
+        console.log(pattern3.test('https://example.com#/books/123')); // true
+        console.log(pattern3.test('https://example.com#/books')); // false
+        console.log(pattern3.test('https://example.com#/books/')); // true
+
+        // 如果用{}匹配，那么?会作用于{}所属的表达式上，前面的/当成固定字符匹配
+        const pattern4 = new URLPattern({ pathname: '/books/{:id}?' });
+        console.log(pattern4.test('https://example.com/books/123')); // true
+        console.log(pattern4.test('https://example.com/books')); // false
+        console.log(pattern4.test('https://example.com/books/')); // true
+    })
+</script>
+</body>
+</html>

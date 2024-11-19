@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // 创建一个 TransformStream 实例
+        const myTransformStream = new TransformStream({
+            start(controller) {
+                // 当流初始化时，你可以执行一些操作
+            },
+            transform(chunk, controller) {
+                // 在这里处理每个数据块
+                // 使用 desiredSize 属性来决定是否需要继续入队更多的数据块
+                console.log("chunk size:")
+                console.log(controller.desiredSize)
+
+                if (controller.desiredSize > 0) {
+                    // 如果队列有足够的空间，则入队数据块
+                    controller.enqueue(chunk);
+                }
+
+                // 打印添加数据后队列大小
+                console.log("queue size after add chunk:")
+                console.log(controller.desiredSize)
+            },
+            flush(controller) {
+                // 当流关闭时，你可以执行一些清理操作
+            }
+        }, {highWaterMark: 2}, {highWaterMark: 2});
+
+        // 使用这个 TransformStream 来处理数据
+        const readableStream = myTransformStream.readable;
+        const writableStream = myTransformStream.writable;
+
+        // 向流中写入数据
+        const writer = writableStream.getWriter();
+        await writer.write(new Uint8Array([1, 2, 3]));      /* 写入数据块, 等到读取完后再执行下一步*/
+
+        // 读取流中的数据
+        const reader = readableStream.getReader();
+        reader.read().then(({value, done}) => {
+            if (done) {
+                console.log('流处理完成');
+            } else {
+                console.log('从流中读取到的数据：', value);
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../../libs/default-stylesheet.css"/>
+    <style></style>
+</head>
+<body>
+
+<button id="fullscreen-btn">全屏</button>
+<button id="scan-screens">获取屏幕</button>
+<script type="module">
+    import {Mano} from "../../libs/Mano/Mano.js";
+    import {Toast} from "../../libs/Toast2.js";
+    import {JSONParser} from "../../libs/JSONParser.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        const mano = new Mano();
+        const canvas = new Mano.Canvas({
+            height: 400,
+            width: 700
+        });
+        mano.appendChild(canvas);
+
+        const graphic = new Mano.Graphic();
+        mano.appendChild(graphic)
+
+        const rect = new Mano.Graphic.Rect(100, 100, 200, 100);
+        rect.content = "这是一个画的方块";
+        rect.font = new Mano.Font({font: "20px Arial"});
+        rect.backgroundColor = Mano.Color.GREEN;
+        rect.fillType = Mano.FILL_TYPE.GRAPHIC_STROKE;
+        graphic.appendChild(rect);
+
+        document.body.appendChild(mano);
+
+
+        let screenTable = null;
+        let screensList = [];
+
+        document.getElementById("fullscreen-btn").addEventListener("click", function () {
+            const selectedScreen = screenTable.toJSON()[0]
+            let screen;
+            if (selectedScreen){
+                screen = screensList[selectedScreen.id]
+            }
+            mano.requestFullscreen(screen);
+
+        });
+
+        document.getElementById("scan-screens").addEventListener("click", async function () {
+            const screens = await window.getScreenDetails().catch(e => {
+                Toast.showError("授权失败" + e.message);
+            });
+
+            const tableContainers = Array.from(document.getElementsByClassName("table-container"))
+            tableContainers.forEach(tableContainer => {
+                tableContainer.parentElement.removeChild(tableContainer);
+            })
+
+            screens.screens.forEach(screen => {
+                screen.oncurrentscreenchange = function (event) {
+                    console.log("oncurrentscreenchange", event)
+                    Toast.showMessage("oncurrentscreenchange");
+                };
+                screen.onscreenschange = function (event) {
+                    console.log("onscreenschange", event)
+                    Toast.showMessage("onscreenschange");
+                };
+                screen.onchange = function (event) {
+                    console.log("onchange", event)
+                    Toast.showMessage("onchange");
+                };
+            })
+
+            const screensInfo = screens.screens.map((screen, index) => {
+                const info = {
+                    id: index,
+                    label: screen.label,
+                    isPrimary: screen.isPrimary,
+                    colorDepth: screen.colorDepth,
+                    availHeight: screen.availHeight,
+                    availWidth: screen.availWidth,
+                    isExtended: screen.isExtended
+                };
+
+                screensList.push(screen)
+                return info;
+            });
+
+            console.log(screensInfo)
+            screenTable = new JSONParser(screensInfo);
+            screenTable.render();
+
+        });
+
+    })
+</script>
+</body>
+</html>

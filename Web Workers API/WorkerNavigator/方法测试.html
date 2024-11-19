@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+    <link rel="stylesheet" type="text/css" href="../../libs/default-stylesheet.css"/>
+</head>
+<body>
+<button id="send-setAppBadge">发送setAppBadge()方法</button>
+<button id="send-clearAppBadge">发送clearAppBadge()方法</button>
+<label>setAppBadge()方法参数<input type="text" id="setAppBadge-value"/></label>
+<script type="module">
+    import {JSONParser} from "../../libs/JSONParser.js";
+
+    let registration
+    navigator.serviceWorker.register("方法测试.js").then(function (reg) {
+        registration = reg;
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const sendSetAppBadge = document.getElementById("send-setAppBadge");
+        const sendClearAppBadge = document.getElementById("send-clearAppBadge");
+        const setAppBadgeValue = document.getElementById("setAppBadge-value");
+
+        sendSetAppBadge.addEventListener("click", function () {
+            registration.active.postMessage({
+                "method": "setAppBadge",
+                "value": setAppBadgeValue.value
+            });
+        });
+
+        sendClearAppBadge.addEventListener("click", function () {
+            registration.active.postMessage({
+                "method": "clearAppBadge"
+            });
+        })
+    })
+</script>
+</body>
+</html>

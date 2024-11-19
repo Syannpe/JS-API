@@ -1,0 +1,28 @@
+{
+  "name": "11 处理分享数据",
+  "icons": [
+    {
+      "src": "../0 resource/kotone31024.png",
+      "type": "image/png",
+      "sizes": "1024x1024"
+    }
+  ],
+  "start_url": "http://localhost/0PWA%e5%ba%94%e7%94%a8%e6%8c%87%e5%8d%97/11%20%e5%a4%84%e7%90%86%e5%88%86%e4%ba%ab%e6%95%b0%e6%8d%ae.html",
+  "display": "fullscreen",
+  "background_color": "peachpuff",
+  "theme_color": "peachpuff",
+  "share_target": {
+    "action": "./share-file-handler",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "file",
+          "accept": ["*/*"]
+        }
+      ]
+    }
+  }
+
+}

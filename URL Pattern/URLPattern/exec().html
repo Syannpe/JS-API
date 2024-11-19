@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>exec()</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+// 创建一个URLPattern实例，匹配任何包含"user"的路径
+        const pattern = new URLPattern({pathname: '/user/*'});
+
+// 使用exec()方法匹配一个URL
+        const result = pattern.exec('https://example.com/user/profile');
+
+// 输出匹配结果
+        if (result) {
+            console.log('匹配的路径部分:', result.pathname.groups);
+        } else {
+            console.log('URL不匹配模式');
+        }
+
+    })
+</script>
+</body>
+</html>

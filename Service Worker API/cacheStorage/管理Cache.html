@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+    </style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        navigator.serviceWorker.register("./管理Cache.js", {scope: "./"}).then(serviceWorkerRegistration => {
+            console.log("注册成功")
+        })
+    })
+</script>
+</body>
+</html>

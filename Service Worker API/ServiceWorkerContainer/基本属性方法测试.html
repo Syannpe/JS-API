@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        navigator.serviceWorker.register("./基本属性方法测试.js").then(async register => {
+            console.log("navigator.serviceWorker.controller", navigator.serviceWorker.controller);
+            console.log("navigator.serviceWorker.ready", await navigator.serviceWorker.ready);
+
+            navigator.serviceWorker.startMessages();
+            console.log("navigator.serviceWorker.getRegistration()", await navigator.serviceWorker.getRegistration());
+            console.log("navigator.serviceWorker.getRegistrations()", await navigator.serviceWorker.getRegistrations());
+
+
+            navigator.serviceWorker.addEventListener("message", function (ev) {
+                console.log("主线程message事件", ev);
+            });
+            navigator.serviceWorker.addEventListener("error", function (ev) {
+                console.log("主线程error事件", ev);
+            });
+
+        })
+    })
+</script>
+</body>
+</html>

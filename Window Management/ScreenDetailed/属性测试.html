@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+    <link rel="stylesheet" type="text/css" href="../../libs/default-stylesheet.css"/>
+</head>
+<body>
+<button id="btn">申请权限</button>
+<script type="module">
+    import {Toast} from "../../libs/Toast2.js";
+    import {JSONParser} from "../../libs/JSONParser.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        const button = document.getElementById("btn");
+
+        const screenChangeCB = function (event) {
+            const tableContainers = Array.from(document.getElementsByClassName("table-container"))
+            tableContainers.forEach(tableContainer => {
+                tableContainer.parentElement.removeChild(tableContainer);
+            });
+
+            button.click();
+        };
+
+        button.addEventListener("click", async function () {
+            const screens = await window.getScreenDetails().catch(e => {
+                Toast.showError("授权失败" + e.message);
+            });
+
+            try {
+                screens.screens.forEach(screen => {
+                    screen.oncurrentscreenchange = screenChangeCB;
+                    screen.onscreenschange = screenChangeCB;
+
+                    const screenProperties = {};
+                    for (const screenKey in screen) {
+                        if(screen[screenKey] instanceof Object)continue;
+                        screenProperties[screenKey] = screen[screenKey];
+                    }
+
+                    console.log(screenProperties)
+                    const jsonParser = new JSONParser(screenProperties);
+                    jsonParser.render();
+                })
+            } catch (e) {
+                Toast.showError("授权失败" + e.message);
+            }
+        })
+
+        this.addEventListener("dblclick", function () {
+            Toast.showMessage("dblclick");
+        });
+    })
+</script>
+</body>
+</html>

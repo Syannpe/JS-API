@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tee()</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // 创建一个可读流（例如，从文件或网络获取数据）
+        const readableStream = new ReadableStream({
+            start(controller) {
+                // 在这里添加数据到流中
+                controller.enqueue('Hello, ');
+                controller.enqueue('world!');
+
+                // 结束流
+                controller.close();
+            }
+        });
+
+        const [stream1, stream2] = readableStream.tee();
+
+        console.log(stream1, stream2)
+
+        console.log("stream1: ")
+        for await (const chunk of stream1) {
+            console.log(chunk);
+        }
+
+        console.log("stream2: ")
+        for await (const chunk of stream2) {
+            console.log(chunk);
+        }
+    })
+</script>
+</body>
+</html>

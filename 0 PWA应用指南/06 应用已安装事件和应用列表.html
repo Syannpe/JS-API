@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="manifest" href="manifest2.json"/>
+    <style></style>
+</head>
+<body>
+<button id="install" hidden>安装</button>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        let installPrompt = null;
+        const installButton = document.querySelector("#install");
+
+        const output = function (text) {
+            const p = document.createElement("p");
+            p.innerText = text;
+            document.body.appendChild(p);
+        }
+
+        // 监听 beforeinstallprompt 事件
+        window.addEventListener("beforeinstallprompt", (event) => {
+            event.preventDefault();
+            installPrompt = event;
+            installButton.removeAttribute("hidden");
+        });
+
+        // 触发安装提示
+        installButton.addEventListener("click", async () => {
+            if (!installPrompt) {
+                return;
+            }
+            const result = await installPrompt.prompt();
+            output(`Install prompt was: ${result.outcome}`);
+            disableInAppInstallPrompt();
+        });
+
+        // 禁用应用内安装提示
+        function disableInAppInstallPrompt() {
+            installPrompt = null;
+            installButton.setAttribute("hidden", "");
+        }
+
+        // 监听 appinstalled 事件
+        window.addEventListener("appinstalled", () => {
+            output("应用已经安装");
+            disableInAppInstallPrompt();
+        });
+
+// 使用 navigator.getInstalledRelatedApps() 方法
+        window.addEventListener("beforeinstallprompt", async (event) => {
+            const relatedApps = await navigator.getInstalledRelatedApps();
+            output("检测到已经安装的应用：");
+            output(relatedApps.join())
+            const psApp = relatedApps.find((app) => app.id === "com.example.myapp");
+            if (psApp) {
+                event.preventDefault();
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded",function (){
+        navigator.serviceWorker.register("./worker.js").then( register => {
+            // console.log(register);
+            fetch("fetch1.txt").then(response => response.text()).then(text => console.log(text))
+        })
+    })
+    </script>
+</body>
+</html>

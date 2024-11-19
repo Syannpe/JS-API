@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    import {Console} from "../../libs/Console.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        /**
+         * 创建一个可读流，用于演示基本的可读流的创建和使用。
+         * 流是字节类型，自动分配块大小为1024字节。
+         * 当流开始或需要更多数据时，会重复发送"Hello World"的UTF-8编码字节。
+         * 当流被取消时，会在控制台打印取消的原因。
+         */
+        let inputReadableStream = new ReadableStream({
+            type: "bytes", // 指定流的类型为字节。
+            autoAllocateChunkSize: 1024, // 自动分配块大小为1024字节。
+
+            // 流开始时的处理逻辑。
+            // 此处使用start方法，因为pull方法在流需要更多数据时调用，而start方法在流开始时调用。
+            start(controller) {
+                // 向控制器发送"Hello World"的UTF-8编码字节。
+                controller.enqueue(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
+                controller.enqueue(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
+                controller.close(); // 关闭控制器，表示没有更多的数据需要发送。
+            },
+
+            // 当流需要更多数据时调用的处理逻辑。
+            // 此处使用pull方法，因为start方法在流开始时调用，而pull方法在流需要更多数据时调用。
+            pull(controller) {
+                // 向控制器发送"Hello World"的UTF-8编码字节，此逻辑在本例中与start方法相同。
+                controller.enqueue(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
+                controller.enqueue(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
+                controller.close(); // 关闭控制器，表示没有更多的数据需要发送。
+            },
+
+            // 流被取消时的处理逻辑。
+            // 此处使用cancel方法，因为start方法在流开始时调用，而cancel方法在流被取消时调用。
+            cancel(reason) {
+                console.log("cancel", reason); // 打印取消操作和原因。
+            }
+        });
+
+        const con = new Console();
+        con.renderAsConsoleApp();
+        con.output("原版数据如下：");
+        con.output("new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100])");
+        con.output("----------------------------------");
+        con.output("选择压缩方式：");
+        con.output("0 exit");
+        con.output("1 gzip");
+        con.output("2 deflate");
+        con.output("3 deflate-raw");
+        con.output("----------------------------------");
+
+        let input = await con.input();
+        while(input !== "0"){
+            let compressionStream;
+            let currentReadableStream;
+            [currentReadableStream,inputReadableStream] = inputReadableStream.tee();
+
+            switch (input-0) {
+                case 1:
+                    compressionStream = new CompressionStream("gzip");
+                    const gzipReadableStream = currentReadableStream.pipeThrough(compressionStream);
+                    const gzipReader = gzipReadableStream.getReader();
+                    const gzipChunk = await gzipReader.read();
+                    con.output("gzip压缩后数据如下：");
+                    con.output(gzipChunk.value);
+                    console.log("gzip压缩后数据如下：",gzipChunk.value)
+                    break;
+                case 2:
+                    compressionStream = new CompressionStream("deflate");
+                    const deflateReadableStream = currentReadableStream.pipeThrough(compressionStream);
+                    const deflateReader = deflateReadableStream.getReader();
+                    const deflateChunk = await deflateReader.read();
+                    con.output("deflate压缩后数据如下：");
+                    con.output(deflateChunk.value);
+                    break;
+                case 3:
+                    compressionStream = new CompressionStream("deflate-raw");
+                    const deflateRawReadableStream = currentReadableStream.pipeThrough(compressionStream);
+                    const deflateRawReader = deflateRawReadableStream.getReader();
+                    const deflateRawChunk = await deflateRawReader.read();
+                    con.output("deflate-raw压缩后数据如下：");
+                    con.output(deflateRawChunk.value);
+                    break;
+                default:
+                    con.output("输入错误，请重新输入");
+            }
+
+            input = await con.input();
+
+        }
+
+
+    })
+</script>
+</body>
+</html>

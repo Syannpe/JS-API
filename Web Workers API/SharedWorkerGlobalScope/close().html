@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+    <link rel="stylesheet" type="text/css" href="../../libs/default-stylesheet.css" />
+</head>
+<body>
+<button id="send-msg">发送消息</button>
+<button id="send-close">关闭消息</button>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        const sendMsg = document.getElementById("send-msg");
+        const sendClose = document.getElementById("send-close");
+
+        // 创建一个新的SharedWorker对象
+        const myWorker = new SharedWorker('SharedWorkerGlobalScope.js', "SharedWorker");
+
+        myWorker.port.start();
+
+        // 使用SharedWorker对象
+        myWorker.port.onmessage = function (e) {
+            console.log("Message received from worker", e.data);
+        };
+
+        myWorker.addEventListener('error', function (e) {
+            console.log("Error in worker:", e.message);
+        })
+
+        sendMsg.addEventListener("click", function () {
+            myWorker.port.postMessage('发送消息');
+
+        });
+        sendClose.addEventListener("click", function () {
+            myWorker.port.postMessage('close');
+        });
+
+
+    })
+</script>
+</body>
+</html>

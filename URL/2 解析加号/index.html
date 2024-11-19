@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        const rawData = "\x13à\x17@\x1F\x80";
+        const base64Data = btoa(rawData); // 'E+AXQB+A'
+
+        const searchParams = new URLSearchParams(`bin=${base64Data}`); // 'bin=E+AXQB+A'
+        const binQuery = searchParams.get("bin"); // 'E AXQB A', '+' is replaced by spaces
+
+        console.log(atob(binQuery), rawData, atob(binQuery) === rawData); // false
+
+
+    })
+</script>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        const rawData = "\x13à\x17@\x1F\x80";
+        const base64Data = btoa(rawData); // 'E+AXQB+A'
+        const encodedBase64Data = encodeURIComponent(base64Data); // 'E%2BAXQB%2BA'
+
+        const searchParams = new URLSearchParams(`bin=${encodedBase64Data}`); // 'bin=E%2BAXQB%2BA'
+        const binQuery = searchParams.get("bin"); // 'E+AXQB+A'
+
+        console.log(atob(binQuery),rawData,atob(binQuery) === rawData); // true
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建TextEncoder实例
+        const encoder = new TextEncoder();
+
+        // 使用encode()方法
+        const encoded = encoder.encode("Hello, World!");
+        console.log(encoded); // 输出Uint8Array
+    })
+</script>
+</body>
+</html>

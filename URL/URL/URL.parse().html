@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 假设我们有一个相对URL和一个基础URL
+        let relativeURL = '../cats';
+        let baseURL = 'http://www.example.com/dogs';
+
+// 使用parse()方法尝试解析这个URL
+        let parsedURL = URL.parse(relativeURL, baseURL);
+
+// 如果URL有效，打印出解析后的URL的各个组成部分
+        if (parsedURL) {
+            console.log(parsedURL.hostname); // "www.example.com"
+            console.log(parsedURL.pathname); // "/cats"
+        } else {
+            console.log('无效的URL'); // 如果URL无效，则输出
+        }
+
+    })
+</script>
+</body>
+</html>

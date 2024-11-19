@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+    <link rel="stylesheet" type="text/css" href="../../libs/default-stylesheet.css"/>
+</head>
+<body>
+<button id="btn">申请权限</button>
+<script type="module">
+    import {Toast} from "../../libs/Toast2.js";
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        const button = document.getElementById("btn");
+
+        Toast.showMessage("开始操作");
+
+        button.addEventListener("click", async function () {
+            const screens = await window.getScreenDetails().catch(e => {
+                Toast.showError("授权失败" + e.message);
+            });
+
+            try {
+
+                screens.oncurrentscreenchange = function (event) {
+                    console.log("oncurrentscreenchange", event)
+                    Toast.showMessage("oncurrentscreenchange");
+                };
+            } catch (e) {
+                Toast.showError("授权失败" + e.message);
+            }
+        })
+        // await navigator.permissions.query({name: "window-management"});
+
+        // const screens = await window.getScreenDetails();
+        this.addEventListener("dblclick", function () {
+            Toast.showMessage("dblclick");
+        });
+    })
+</script>
+</body>
+</html>

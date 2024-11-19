@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // 创建一个新的 ReadableStream 示例
+        const stream = new ReadableStream({
+            start(controller) {
+                // 这里可以放置初始化代码
+                // 例如，可以在这里推送一些初始数据块到流中
+                controller.enqueue('First chunk');
+                controller.enqueue('Second chunk');
+                // ...
+                controller.close(); // 当数据发送完毕时调用
+            }
+        });
+
+        for await (const chunk of stream.values({preventCancel: true})) {
+            // 处理每个数据块
+            console.log(chunk);
+            // 如果需要提前退出循环，可以使用 break 语句
+            break;
+        }
+
+        console.log('loop end')
+        stream.getReader().read().then(_ => {
+            console.log(_.value);
+        })
+
+
+    })
+</script>
+</body>
+</html>

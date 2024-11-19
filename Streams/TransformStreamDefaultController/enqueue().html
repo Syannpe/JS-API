@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个 TransformStream 实例，传入转换器
+        const uppercaseStream = new TransformStream({
+            // 当有新的块写入可写流时，transform 方法会被调用
+            transform(chunk, controller) {
+                // 将文本块转换为大写
+                const uppercaseChunk = chunk.toUpperCase();
+                // 使用控制器将转换后的块放入可读流
+                controller.enqueue(uppercaseChunk);
+            }
+        });
+
+        // 使用示例：将小写文本转换为大写并输出
+        const readableStream = new ReadableStream({
+            start(controller) {
+                // 将一些小写文本块放入流中
+                controller.enqueue('hello');
+                controller.enqueue('world');
+                controller.close();
+            }
+        });
+
+        // 将可读流通过 TransformStream 转换，然后通过可写流输出
+        const writableStream = new WritableStream({
+            write(chunk) {
+                console.log("chunk:", chunk); // 输出大写的 'HELLO' 和 'WORLD'
+            }
+        });
+
+        // 开始转换流程
+        readableStream.pipeThrough(uppercaseStream).pipeTo(writableStream);
+
+
+
+    })
+</script>
+</body>
+</html>

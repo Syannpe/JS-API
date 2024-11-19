@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 辅助函数：生成随机字符串
+        function randomChars() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < 10; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+
+        // 创建自定义的 ReadableStream
+        const stream = new ReadableStream({
+            start(controller) {
+                // 当流创建时调用
+                let string = randomChars();
+                controller.enqueue(string); // 将随机字符串添加到流中
+
+                setTimeout(() => controller.close(), 5000)
+            },
+            async pull(controller) {
+                // 在这个示例中不需要 pull 方法
+                let string = randomChars();
+                controller.enqueue(string); // 将随机字符串添加到流中
+
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            },
+            cancel(controller) {
+                // 如果读取器取消，停止生成字符串
+            },
+        });
+
+        // 从流中读取数据
+        async function fetchStream() {
+            const reader = stream.getReader();
+
+            try {
+                while (true) {
+                    const {done, value} = await reader.read();
+                    if (done) break;
+                    console.log(value);
+                }
+            } finally {
+                reader.releaseLock();
+            }
+        }
+
+        // 调用 fetchStream 从流中读取数据
+        fetchStream();
+
+    })
+</script>
+</body>
+</html>

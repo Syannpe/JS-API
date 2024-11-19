@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    import {dataTable} from "./data-table.js";
+    import {JSONParser} from "../../libs/JSONParser.js";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const jsonParser = new JSONParser(dataTable);
+        jsonParser.defaultInit();
+
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // 创建一个TransformStream，它将输入的所有值转换为字符串
+        const numberToStringStream = new TransformStream({
+            start(controller) {
+                // TransformStream启动时的初始化代码
+            },
+            transform(chunk, controller) {
+                // 将接收到的数据块（chunk）转换为字符串
+                controller.enqueue(chunk.toString());
+                controller.terminate()
+            },
+            flush(controller) {
+                // 在流关闭前调用，可以执行清理工作
+            }
+        });
+
+        // 使用示例：将小写文本转换为大写并输出
+        const readableStream = new ReadableStream({
+            start(controller) {
+                // 将一些小写文本块放入流中
+                controller.enqueue(1);
+                controller.enqueue(2);
+            }
+        });
+
+        // 将可读流通过 TransformStream 转换，然后通过可写流输出
+        const writableStream = new WritableStream({
+            write(chunk) {
+                // 处理转换后的数据块
+                console.log("chunk:", chunk);
+            }
+        });
+
+        // 开始转换流程
+        await readableStream.pipeThrough(numberToStringStream).pipeTo(writableStream);
+
+        numberToStringStream.readable.getReader().closed.then(() => {
+            console.log("numberToStringStream.readable.closed")
+        });
+        numberToStringStream.writable.getWriter().closed.then(() => {
+            console.log("numberToStringStream.writable.closed")
+        });
+
+        
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="../../libs/default-stylesheet.css"/>
+</head>
+<body>
+<p>目前通过了两种方法在serviceWorker中获得type为worker的client
+第一个方法是在Worker中发送HTTP请求之后在serviceWorker中拦截，但是即便拦截到了Worker依然不以其client而存在
+第二个方法是在Worker中注册ServiceWorker，但是目前注册不了，navigator.serviceWorker返回undefined
+</p>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", async function () {
+        await Notification.requestPermission();
+
+        const registration = await navigator.serviceWorker.register("./方法测试.js", {scope: "./"});
+        registration.showNotification("title", {
+            body: "body",
+            lang: "zh-CN",
+            requireInteraction: true,
+            silent: false,
+            data: "请点击我触发事件",
+        })
+
+        navigator.serviceWorker.addEventListener("message", function (ev) {
+            console.log(ev, ev.data);
+        })
+    })
+</script>
+</body>
+</html>

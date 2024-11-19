@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>pipeThrough()</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // 创建一个可读流（例如，从文件或网络获取数据）
+        const readableStream = new ReadableStream({
+            start(controller) {
+                // 在这里添加数据到流中
+                controller.enqueue('Hello, ');
+                controller.enqueue('world!');
+
+                // 结束流
+                controller.close();
+            }
+        });
+
+        // 创建一个转换器（例如，将数据转换为大写）
+        const transformStream = new TransformStream({
+            async transform(chunk, controller) {
+                // 将 chunk 转换为大写并添加到输出流
+                const upperCaseChunk = chunk.toUpperCase();
+                controller.enqueue(upperCaseChunk);
+            }
+        });
+
+        for await(const chunk of readableStream.pipeThrough(transformStream)) {
+            console.log(`Received chunk: ${chunk}`)
+        }
+
+    })
+</script>
+</body>
+</html>

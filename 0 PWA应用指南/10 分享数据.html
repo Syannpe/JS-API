@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+<input type="file" id="file"/>
+<button id="share" style="display: none;">分享</button>
+<script type="module">
+    import {Console} from "../libs/Console.js";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const con = new Console();
+        con.renderAsConsoleInline();
+
+        // Retrieve the button from the DOM. The button is hidden for now.
+        const button = document.querySelector("#share");
+        const fileInput = document.querySelector("#file");
+
+        // Check if the browser supports sharing files.
+        function canBrowserShareFiles() {
+            if (!navigator.share || !navigator.canShare) {
+                return false;
+            }
+
+            // Create some test data with a file, to check if the browser supports
+            // sharing it.
+            const testFile = new File(["foo"], "foo.txt", {type: "text/plain"});
+            const data = {files: [testFile]};
+
+            return navigator.canShare(data);
+        }
+
+
+        if (canBrowserShareFiles()) {
+            // The browser supports sharing files. Show the button.
+            button.style.display = "inline";
+
+            // Listen for clicks on the button and share a file.
+            button.addEventListener("click", async () => {
+                try {
+                    // Get the file to be shared. This function should return a File
+                    // object, perhaps by creating it dynamically, or retrieving it
+                    // from IndexedDB.
+                    let file;
+                    if (fileInput.files.length === 0) {
+                        file = new File(["foo"], "foo.txt", {type: "text/plain"});
+                    }else {
+                        file = fileInput.files[0];
+                    }
+
+                    await navigator.share({
+                        title: file.name,
+                        files: [file],
+                    });
+
+                    con.output("The file was successfully shared");
+                } catch (err) {
+                    con.error(`The file could not be shared: ${err}`);
+                }
+            });
+        }
+    })
+</script>
+</body>
+</html>

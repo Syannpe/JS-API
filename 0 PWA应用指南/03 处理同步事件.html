@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    navigator.serviceWorker.register("service-worker2.js").then(function (registration) {
+        console.log("Service worker registered");
+    }).catch(function (err) {
+        console.log(err);
+    });
+    navigator.serviceWorker.ready.then(function (swRegistration) {
+        console.log("Service worker ready")
+        swRegistration.sync.register("send-message");
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            console.log(registrations)
+            if (registrations[0])
+                registrations[0].sync.register("send-message");
+        });
+
+
+        // main.js
+
+        /*async function registerSync() {
+            const swRegistration = await navigator.serviceWorker.ready;
+            swRegistration.sync.register("send-message");
+        }
+
+        registerSync();*/
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+<iframe id="receiver" src="start().html"></iframe>
+<input type="text" id="text"/>
+<button id="sendMessage">Send Message</button>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 获取接收消息窗口的引用
+        var receiver = document.getElementById('receiver').contentWindow;
+
+
+        const messageChannel = new MessageChannel();
+
+        messageChannel.port1.start()
+        messageChannel.port2.start();
+
+        receiver.onload = function () {
+            // 将端口1传递给接收窗口
+            receiver.postMessage('Hello from the main page!', '*', [messageChannel.port2]);
+        };
+
+        messageChannel.port1.onmessage = function (e) {
+            console.log(e.data);
+        };
+        messageChannel.port1.onmessageerror = function (e) {
+            console.log(e.data);
+        };
+
+        document.getElementById('sendMessage').onclick = function () {
+            messageChannel.port1.postMessage(document.getElementById('text').value);
+        }
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="default-stylesheet.css"/>
+    <style></style>
+</head>
+<body>
+prefetch.html
+<script type="module">
+    console.log("prefetch")
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        function respondToPrefetch() {
+            console.log("此页面已检测出是通过prefetch获取的")
+        }
+        if (
+            performance.getEntriesByType("navigation")[0].deliveryType ===
+            "navigational-prefetch"
+        ) {
+            respondToPrefetch(); // Author-defined function
+        }
+        console.log("next")
+    })
+</script>
+</body>
+</html>

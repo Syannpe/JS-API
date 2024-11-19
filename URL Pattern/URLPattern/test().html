@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test()</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个URLPattern实例，匹配任何协议为https的URL
+        const pattern = new URLPattern({protocol: 'https'});
+
+        // 使用test()方法检查URL是否符合模式
+        const result = pattern.test('https://example.com');
+
+        console.log(result); // 输出：true
+
+    })
+</script>
+</body>
+</html>

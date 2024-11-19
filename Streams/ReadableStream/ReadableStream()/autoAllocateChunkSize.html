@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个自动分配缓冲区大小的字节流
+        const autoAllocatingByteStream = new ReadableStream({
+            start(controller) {
+                // 初始化流的源头
+                controller.enqueue(new Uint8Array([0x01, 0x02, 0x03]));
+                controller.close(); // 关闭流
+            },
+            type: 'bytes',
+            autoAllocateChunkSize: 512
+        });
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个TextDecoder实例，默认使用'utf-8'编码
+        let utf8decoder = new TextDecoder();
+
+        // 使用TextDecoder的decode方法
+        // 示例：解码一个UTF-8编码的中文/日文字符
+        let u8arr = new Uint8Array([240, 160, 174, 183]);
+        console.log("解码结果: " + utf8decoder.decode(u8arr)); // 输出对应的字符
+
+        // 示例：解码使用Windows-1251编码的俄文文本"Привет, мир!"
+        const win1251decoder = new TextDecoder("windows-1251");
+        const bytes = new Uint8Array([207, 240, 232, 226, 229, 242, 44, 32, 236, 232, 240, 33]);
+        console.log("解码结果: " + win1251decoder.decode(bytes)); // Привет, мир!
+
+    })
+</script>
+</body>
+</html>

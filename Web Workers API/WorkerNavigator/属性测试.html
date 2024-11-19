@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+    <link rel="stylesheet" type="text/css" href="../../libs/default-stylesheet.css"/>
+</head>
+<body>
+<button id="send-properties">发送属性</button>
+<button id="send-method">发送方法</button>
+<script type="module">
+    import {JSONParser} from "../../libs/JSONParser.js";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const sendProperties = document.getElementById("send-properties");
+        const sendMethod = document.getElementById("send-method");
+
+        const worker = new Worker("属性测试.js", {
+            type: "module"
+        });
+
+        const clearTable = function () {
+            const tables = Array.from(document.getElementsByClassName("table-container"));
+            tables.forEach(function (table) {
+                table.parentElement.removeChild(table);
+            });
+        };
+
+        worker.onmessage = function (e) {
+            clearTable();
+            const jsonParser = new JSONParser(e.data);
+            jsonParser.defaultInit();
+        };
+        worker.onerror = function (e) {
+            console.log("错误：", e);
+        };
+
+        sendProperties.addEventListener("click", function () {
+            worker.postMessage("properties");
+        });
+        sendMethod.addEventListener("click", function () {
+            worker.postMessage("methods");
+        });
+    })
+</script>
+</body>
+</html>

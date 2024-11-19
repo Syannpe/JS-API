@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    navigator.serviceWorker.register("service-worker4.js").then(function (registration) {
+        console.log("Service worker registered");
+    }).catch(function (err) {
+        console.log(err);
+    });
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        async function registerPeriodicSync() {
+            const swRegistration = await navigator.serviceWorker.ready;
+            swRegistration.periodicSync.register("update-news", {
+                // try to update every 24 hours
+                minInterval: 24 * 60 * 60 * 1000,
+            });
+        }
+
+        const swRegistration = await navigator.serviceWorker.ready;
+
+        navigator.permissions.query({ name: 'periodic-background-sync' })
+            .then(permission => {
+                console.log(permission)
+                if (permission.state === 'granted') {
+                    console.log('Background Sync permission granted!');
+                    registerPeriodicSync();
+                } else if (permission.state === 'prompt') {
+                    console.log('Background Sync permission not granted yet, but can be requested.');
+                    // requestBackgroundSyncPermission();
+                    requestPeriodicSyncPermission();
+                } else if (permission.state === 'denied') {
+                    console.error('Background Sync permission denied.');
+                    // requestBackgroundSyncPermission();
+                    requestPeriodicSyncPermission();
+
+
+                    // 权限已被拒绝，您需要采取其他措施来实现您的功能
+                } else {
+                    console.error('Unknown permission state for Background Sync.');
+                }
+            });
+
+        function requestBackgroundSyncPermission() {
+            navigator.permissions.request({ name: 'periodic-background-sync' })
+                .then(permission => {
+                    if (permission.state === 'granted') {
+                        console.log('Background Sync permission granted!');
+                        registerPeriodicSync();
+                    } else {
+                        console.error('Background Sync permission request denied.');
+                        // 权限请求被拒绝
+                    }
+                });
+        }
+
+        function requestPeriodicSyncPermission() {
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    registerPeriodicSync();
+                } else {
+                    console.log('Permission for notifications is denied.');
+                }
+            });
+        }
+    })
+</script>
+</body>
+</html>

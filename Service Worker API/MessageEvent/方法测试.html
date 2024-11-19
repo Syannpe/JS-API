@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+    </style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", async function () {
+        navigator.serviceWorker.register("./方法测试.js", {scope: "./"}).then(registration => {
+             navigator.serviceWorker.controller.postMessage("hello");
+        });
+
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="default-stylesheet.css"/>
+    <style></style>
+</head>
+<body>
+<a href="prerender.html">prerender.html</a>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", async function () {
+        if (
+            HTMLScriptElement.supports &&
+            HTMLScriptElement.supports("speculationrules")
+        ) {
+            const specScript = document.createElement("script");
+            specScript.type = "speculationrules";
+            const specRules = {
+                prerender: [
+                    {
+                        source: "list",
+                        urls: ["./prerender.html"],
+                    },
+                ],
+            };
+            specScript.textContent = JSON.stringify(specRules);
+            document.body.append(specScript);
+        }
+    })
+</script>
+</body>
+</html>

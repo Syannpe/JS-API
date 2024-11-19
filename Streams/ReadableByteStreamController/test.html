@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+研究到byobRequest属性，研究完了就研究这个属性的返回值的类，看看这个demo是怎么回事
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        class MockHypotheticalSocket {
+            constructor() {
+                this.max_data = 800; // total amount of data to stream from "socket"
+                this.max_per_read = 100; // max data per read
+                this.min_per_read = 40; // min data per read
+                this.data_read = 0; // total data read so far (capped is maxdata)
+                this.socketdata = null;
+            }
+
+            // Method returning promise when this socket is readable.
+            select2() {
+                // Object used to resolve promise
+                const resultobj = {};
+                resultobj["bytesRead"] = 0;
+
+                return new Promise((resolve /*, reject*/) => {
+                    if (this.data_read >= this.max_data) {
+                        //out of data
+                        resolve(resultobj);
+                        return;
+                    }
+
+                    // Emulate slow read of data
+                    setTimeout(() => {
+                        const numberBytesReceived = this.getNumberRandomBytesSocket();
+                        this.data_read += numberBytesReceived;
+                        this.socketdata = this.randomByteArray(numberBytesReceived);
+                        resultobj["bytesRead"] = numberBytesReceived;
+                        resolve(resultobj);
+                    }, 500);
+                });
+            }
+
+            /**
+             * 从当前存储的socket数据中读取指定长度的数据到缓冲区。
+             * 假设缓冲区大小始终大于或等于待写入的数据量。
+             *
+             * @param {ArrayBufferView} buffer - 目标缓冲区。
+             * @param {number} offset - 缓冲区开始写入的偏移量。
+             * @param {number} length - 期望读取并写入的数据长度。
+             *
+             * @returns {number} 实际读取并写入到缓冲区的数据长度。如果无数据可读，则返回0。
+             */
+            readInto(buffer, offset, length) {
+                let length_data = 0;
+                if (this.socketdata) {
+                    length_data = this.socketdata.length;
+                    const myview = new Uint8Array(buffer, offset, length);
+                    // 将指定长度的数据从socket数据写入缓冲区
+                    for (let i = 0; i < length_data; i++) {
+                        myview[i] = this.socketdata[i];
+                    }
+                    this.socketdata = null; // 读取完毕后清空socket数据
+                }
+                return length_data;
+            }
+
+            /**
+             * 关闭连接或资源，此实现为空操作。
+             *
+             * @returns {undefined} 该方法不返回任何值。
+             */
+            close() {
+                return;
+            }
+
+
+            /**
+             * 获取一个随机字节长度，基于当前已读取数据量和每次读取的最小/最大字节限制。
+             * @returns {number} 返回一个介于最小读取字节和剩余数据量与最大读取字节中较小值之间的整数。
+             */
+            getNumberRandomBytesSocket() {
+                // 计算剩余可读数据量
+                const remaining_data = this.max_data - this.data_read;
+                // 根据剩余数据量和最小/最大读取限制，计算实际接收字节长度
+                const numberBytesReceived =
+                    remaining_data < this.min_per_read
+                        ? remaining_data
+                        : this.getRandomIntInclusive(
+                            this.min_per_read,
+                            Math.min(this.max_per_read, remaining_data),
+                        );
+                return numberBytesReceived;
+            }
+
+            /**
+             * 生成一个介于min和max（包括min和max）之间的随机整数。
+             * @param {number} min - 随机数下限。
+             * @param {number} max - 随机数上限。
+             * @returns {number} 返回一个随机整数。
+             */
+            getRandomIntInclusive(min, max) {
+                min = Math.ceil(min); // 确保下限是向上取整后的值
+                max = Math.floor(max); // 确保上限是向下取整后的值
+                return Math.floor(Math.random() * (max - min + 1) + min);
+            }
+
+            /**
+             * 生成一个指定长度的随机字符字符串。
+             * @param {number} length - 字符串长度，默认为8。
+             * @returns {string} 返回一个随机字符字符串。
+             */
+            randomChars(length = 8) {
+                let string = "";
+                let choices =
+                    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
+
+                // 循环生成随机字符直到达到指定长度
+                for (let i = 0; i < length; i++) {
+                    string += choices.charAt(Math.floor(Math.random() * choices.length));
+                }
+                return string;
+            }
+
+            /**
+             * 生成一个指定长度的随机字节数组。
+             * @param {number} bytes - 字节数组长度，默认为8。
+             * @returns {Uint8Array} 返回一个包含随机字符编码的Uint8Array。
+             */
+            randomByteArray(bytes = 8) {
+                const textEncoder = new TextEncoder();
+                // 使用随机字符字符串编码为字节数组
+                return textEncoder.encode(this.randomChars(bytes));
+            }
+
+        }
+
+        /**
+         * 创建一个基于给定主机和端口的模拟Socket流。
+         * 该流是一个ReadableStream，用于处理字节数据。
+         *
+         * @param {string} host - 主机地址。
+         * @param {number} port - 端口号。
+         * @returns {ReadableStream} 一个可读字节流，使用MockHypotheticalSocket模拟数据读取。
+         */
+        const makeSocketStream = function (host, port) {
+            const socket = new MockHypotheticalSocket();
+
+            return new ReadableStream({
+                type: "bytes",
+
+                /**
+                 * 启动可读流，开始读取数据并处理。
+                 * @param {ReadableStreamDefaultController} controller - 流控制器。
+                 */
+                start(controller) {
+                    /**
+                     * 递归读取数据，处理BYOB请求或无请求时的数据读取。
+                     */
+                    const readRepeatedly = function () {
+                        return socket.select2().then(() => {
+                            let bytesRead;
+
+                            // 处理BYOB请求
+                            if (controller.byobRequest) {
+                                const v = controller.byobRequest.view;
+                                bytesRead = socket.readInto(v.buffer, v.byteOffset, v.byteLength);
+                                if (bytesRead === 0) {
+                                    controller.close();
+                                }
+
+                                controller.byobRequest.respond(bytesRead);
+                                    console.log(`byobRequest with ${bytesRead} bytes`);
+                            }
+
+                            // 无BYOB请求时，读取默认大小的数据
+                            else {
+                                const buffer = new ArrayBuffer(DEFAULT_CHUNK_SIZE);
+                                bytesRead = socket.readInto(buffer, 0, DEFAULT_CHUNK_SIZE);
+                                if (bytesRead === 0) {
+                                    controller.close();
+                                } else {
+                                    controller.enqueue(new Uint8Array(buffer, 0, bytesRead));
+                                }
+                                console.log(`enqueue() ${bytesRead} bytes (no byobRequest)`);
+                            }
+
+                            // 如果没有更多数据，停止读取
+                            if (bytesRead === 0) {
+                                return;
+                            }
+                            return readRepeatedly();
+                        });
+                    }
+
+                    // 异步读取数据并处理错误
+                    readRepeatedly().catch((e) => controller.error(e));
+                },
+
+                /**
+                 * 取消流，关闭socket。
+                 */
+                cancel() {
+                    socket.close();
+                    console.log(`cancel(): socket closed`);
+                },
+            });
+        }
+
+
+        const stream = makeSocketStream("dummy host", "dummy port");
+
+        const DEFAULT_CHUNK_SIZE = 400;
+
+        const reader = stream.getReader({ mode: "byob" });
+        let buffer = new ArrayBuffer(4000);
+
+        /**
+         * 读取给定的可读流数据，并处理接收到的字节。
+         *
+         * @param {ReadableStreamReader} reader - 可读流的阅读器实例。
+         * @param {ArrayBuffer} buffer - 存储接收到数据的缓冲区。
+         * @param {string} [result=""] - 用于积累接收到的文本结果，初始值为空字符串。
+         */
+        const readStream = function (reader, buffer, result = "") {
+            let bytesReceived = 0;
+            let offset = 0;
+
+            while (offset < buffer?.byteLength ?? 0) {
+                // 读取数据并处理返回的Promise结果
+                reader
+                    .read(new Uint8Array(buffer, offset, buffer.byteLength - offset))
+                    .then(async function processText({ done, value }) {
+                        // 检查是否已完成读取
+                        if (done) {
+                            console.log(`readStream() complete. Total bytes: ${bytesReceived}`);
+                            return;
+                        }
+
+                        // 更新缓冲区和已接收字节数
+                        buffer = value.buffer;
+                        offset += value.byteLength;
+                        bytesReceived += value.byteLength;
+
+                        // 显示已接收字节数
+                        console.log(`Read ${bytesReceived} bytes`);
+                        // 未提供，但假设这里将值累加到result变量
+
+                        // 模拟延迟以体现慢速流读取
+                        if (bytesReceived > 300 && bytesReceived < 600) {
+                            console.log(`Delaying read to emulate slow stream reading`);
+                            const delay = (ms) =>
+                                new Promise((resolve) => setTimeout(resolve, ms));
+                            await delay(1000);
+                        }
+
+                        // 继续读取并递归调用processText
+                        return reader
+                            .read(new Uint8Array(buffer, offset, buffer.byteLength - offset))
+                            .then(processText);
+                    });
+            }
+        };
+
+
+        readStream(reader);
+
+
+    })
+</script>
+</body>
+</html>

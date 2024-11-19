@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 使用示例：将小写文本转换为大写并输出
+        const readableStream = new ReadableStream({
+            start(controller) {
+                // 将一些小写文本块放入流中
+                controller.enqueue('hello');
+                controller.enqueue('world');
+                controller.close();
+            }
+        });
+
+        // 将可读流通过 TransformStream 转换，然后通过可写流输出
+        const writableStream = new WritableStream({
+            write(chunk) {
+                console.log("chunk:", chunk); // 输出大写的 'HELLO' 和 'WORLD'
+            }
+        });
+
+
+        // 创建一个TransformStream，其中包含flush()方法
+        const transformStream = new TransformStream({
+            transform(chunk, controller) {
+                // 当可写侧的块准备好被转换时调用
+                controller.enqueue(chunk); // 这里是简单的身份转换
+            },
+            flush(controller) {
+                // 所有块都已成功转换，可写侧即将关闭时调用
+                controller.enqueue('所有数据块已处理完毕');
+                controller.terminate(); // 关闭可读流
+            }
+        });
+
+        // 使用pipeThrough方法将可读流通过转换流连接到另一个可写流
+        readableStream
+            .pipeThrough(transformStream)
+            .pipeTo(writableStream);
+
+    })
+</script>
+</body>
+</html>

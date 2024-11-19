@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+直至目前触发不了
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个Web Worker
+        const worker = new Worker('onrtctransform.js');
+
+// 创建一个示例RTCRtpScriptTransformer（假设已经有一个实际的RTC连接）
+        const transformer = {
+            readable: new ReadableStream({
+                start(controller) {
+                    // 模拟数据流
+                    controller.enqueue(new Uint8Array([1, 2, 3, 4, 5]));
+                    controller.close();
+                }
+            }),
+            writable: new WritableStream({
+                write(chunk) {
+                    // 处理输出的数据
+                    console.log('Received transformed chunk:', chunk);
+                }
+            })
+        };
+
+// 模拟发送rtctransform事件到Web Worker，并使用transferable objects
+        worker.postMessage({
+            type: 'rtctransform',
+            transformer: {
+                readable: transformer.readable,
+                writable: transformer.writable
+            }
+        }, [transformer.readable, transformer.writable]);
+
+// 监听来自Web Worker的消息（如果有必要）
+        worker.addEventListener('message', (event) => {
+            console.log('Message from worker:', event.data);
+        });
+    })
+</script>
+</body>
+</html>

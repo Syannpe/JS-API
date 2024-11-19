@@ -1,0 +1,13 @@
+{
+  "name": "06 应用已安装事件和应用列表",
+  "icons": [
+    {
+      "src": "../0 resource/sora2048.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "http://localhost:8083/PWA%E5%BA%94%E7%94%A8%E6%8C%87%E5%8D%97/06%20%E5%BA%94%E7%94%A8%E5%B7%B2%E5%AE%89%E8%A3%85%E4%BA%8B%E4%BB%B6%E5%92%8C%E5%BA%94%E7%94%A8%E5%88%97%E8%A1%A8.html",
+  "display": "standalone"
+}

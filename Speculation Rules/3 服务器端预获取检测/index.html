@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="default-stylesheet.css"/>
+    <style></style>
+</head>
+<body>
+<a href="next.html">next.html</a>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", async function () {
+        if (
+            HTMLScriptElement.supports &&
+            HTMLScriptElement.supports("speculationrules")
+        ) {
+            const specScript = document.createElement("script");
+            specScript.type = "speculationrules";
+            const specRules = {
+                prefetch: [
+                    {
+                        source: "list",
+                        urls: ["./next.html"],
+                    },
+                ],
+            };
+            specScript.textContent = JSON.stringify(specRules);
+            document.body.append(specScript);
+        } else {
+            const linkElem = document.createElement("link");
+            linkElem.rel = "prefetch";
+            linkElem.href = "/next.html";
+            document.head.append(linkElem);
+        }
+    })
+</script>
+</body>
+</html>

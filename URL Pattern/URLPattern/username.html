@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>hash</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        let pattern3 = new URLPattern({
+            protocol: "https",
+            username: "user123",
+            password: "secret",
+            hostname: "example.com",
+            port: "8080",
+            pathname: "/books/:id",
+            search: "?category=fiction",
+            hash: "#section1",
+            baseURL: "https://example.com"
+        });
+        console.log(pattern3.username);
+    })
+</script>
+</body>
+</html>

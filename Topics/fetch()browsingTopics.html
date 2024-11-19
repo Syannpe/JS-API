@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+    </style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        async function fetchWithBrowsingTopics(url) {
+            try {
+                const response = await fetch(url, {
+                    browsingTopics: true // 启用browsingTopics选项
+                });
+                /*
+                * 如果使用了这个browsingTopics选项，
+                * 那么浏览器会向服务器发送一个请求头，
+                *   'sec-browsing-topics': '();p=P0000000000000000000000000000000',
+                * 用于表示用户偏好
+                * */
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.text();
+                console.log(data);
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        // 调用示例
+        fetchWithBrowsingTopics('/test');
+    })
+</script>
+</body>
+</html>

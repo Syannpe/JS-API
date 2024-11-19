@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", async function () {
+        console.log(await window.getScreenDetails())
+        const screens = await window.getScreenDetails()
+        console.log(screens.currentScreen)
+    })
+</script>
+</body>
+</html>

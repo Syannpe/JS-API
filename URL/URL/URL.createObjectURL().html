@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 假设我们有一个Blob对象
+        var blob = new Blob(['Hello, world!'], { type: 'text/plain' });
+
+        // 使用createObjectURL创建一个指向该Blob的URL
+        var objectURL = URL.createObjectURL(blob);
+
+        console.log(objectURL);
+        // 输出类似于: blob:http://yourdomain.com/44e8a0b7-91b1-4b6c-90df-85515e9f0eec
+
+        // 当不再需要这个URL时，可以使用revokeObjectURL来释放它
+        URL.revokeObjectURL(objectURL);
+
+
+
+
+        // 创建一个MediaSource对象
+        const mediaSource = new MediaSource();
+        const mediaURL = URL.createObjectURL(mediaSource);
+        console.log(mediaURL);
+        URL.revokeObjectURL(mediaURL);
+
+
+        const file = new File(["foo"], "foo.txt", {
+            type: "text/plain",
+        });
+        const fileURL = URL.createObjectURL(file);
+        console.log(fileURL)
+        URL.revokeObjectURL(fileURL)
+
+
+    })
+</script>
+</body>
+</html>

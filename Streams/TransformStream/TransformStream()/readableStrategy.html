@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 定义一个可读流的策略
+        const readableStrategy = {
+            highWaterMark: 1, // 内部队列可以容纳的数据块数量
+            size(chunk) {
+                // 每个数据块的大小，这里我们以字节为单位
+                return chunk.length;
+            }
+        };
+
+        // 使用TransformStream构造函数创建一个转换流
+        const uppercaseTransformStream = new TransformStream({
+            transform(chunk, controller) {
+                // 将接收到的文本数据块转换为大写
+                controller.enqueue(chunk.toUpperCase());
+            }
+        }, undefined, readableStrategy);
+
+
+        // 使用示例：将小写文本转换为大写并输出
+        const readableStream = new ReadableStream({
+            start(controller) {
+                // 创建一个文本编码器
+                const textEncoder = new TextEncoder();
+
+                // 创建一个字节数组
+                const buffer = new ArrayBuffer(12);
+                const u8a = new Uint8Array(buffer);
+
+                // 将一些小写文本块放入流中
+                textEncoder.encodeInto("hello, world", u8a);
+
+                controller.enqueue(u8a)
+                // 关闭流
+                controller.close();
+            }
+        });
+        // 使用fetch API获取文本数据
+        // 获取响应体的流，并通过转换流进行处理
+        const stream = readableStream
+            .pipeThrough(new TextDecoderStream())
+            .pipeThrough(uppercaseTransformStream);
+
+        // 处理流中的数据
+        stream.getReader().read().then(({value, done}) => {
+            if (!done) {
+                // 输出转换后的数据
+                console.log(value);
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

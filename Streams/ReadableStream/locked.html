@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>locked</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        const stream = new ReadableStream();
+        console.log(stream.locked); // 输出: false
+        stream.getReader();
+        console.log(stream.locked); // 输出: true
+    })
+</script>
+</body>
+</html>

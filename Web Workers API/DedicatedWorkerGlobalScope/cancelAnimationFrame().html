@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../../libs/default-stylesheet.css" />
+</head>
+<body>
+<p>123123132</p>
+<button id="send-msg">发送消息</button>
+<button id="send-close">关闭消息</button>
+<button id="send-start">开始信号</button>
+<button id="send-end">结束信号</button>
+<label>
+    <input type="text" />
+</label>
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        const sendMsg = document.getElementById("send-msg");
+        const sendClose = document.getElementById("send-close");
+        const sendStart = document.getElementById("send-start");
+        const sendEnd = document.getElementById("send-end");
+
+        // 创建一个新的 Worker 对象，并给它一个名字
+        const myWorker = new Worker('cancelAnimationFrame.js', {name: 'demoWorker', type: "module"});
+
+        // 监听来自 Worker 的消息
+        myWorker.onmessage = function (e) {
+            console.log('收到消息：', e.data);
+        };
+
+        sendMsg.addEventListener("click", function () {
+            myWorker.postMessage('你好，Worker!');
+        })
+        sendClose.addEventListener("click", function () {
+            myWorker.postMessage('close');
+        })
+        sendStart.addEventListener("click", function () {
+            myWorker.postMessage('start');
+        })
+        sendEnd.addEventListener("click", function () {
+            myWorker.postMessage('end');
+        })
+    })
+</script>
+</body>
+</html>

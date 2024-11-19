@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", async function () {
+        // Define a custom writable strategy
+        const writableStrategy = {
+            highWaterMark: 1, // The maximum number of chunks in the internal queue
+            size(chunk) {
+                // Return the size of the chunk in bytes
+                return chunk.length;
+            }
+        };
+
+        // Create a TransformStream with the custom writable strategy
+        const uppercaseTransformStream = new TransformStream({
+            transform(chunk, controller) {
+                // Transform the chunk to uppercase
+                controller.enqueue(chunk.toUpperCase());
+
+                // Log the chunk
+                console.log("添加了", chunk)
+            }
+        }, writableStrategy);
+
+        // Example usage of the TransformStream
+        const writer = uppercaseTransformStream.writable.getWriter();
+        writer.write('hello');
+        writer.write('world');
+        writer.close();
+
+
+        for await (let chunk of uppercaseTransformStream.readable){
+            console.log("读取了", chunk)
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        /**
+         * 创建一个可读流，用于演示基本的可读流的创建和使用。
+         * 流是字节类型，自动分配块大小为1024字节。
+         * 当流开始或需要更多数据时，会重复发送"Hello World"的UTF-8编码字节。
+         * 当流被取消时，会在控制台打印取消的原因。
+         */
+        const inputReadableStream = new ReadableStream({
+            type: "bytes", // 指定流的类型为字节。
+            autoAllocateChunkSize: 1024, // 自动分配块大小为1024字节。
+
+            // 流开始时的处理逻辑。
+            // 此处使用start方法，因为pull方法在流需要更多数据时调用，而start方法在流开始时调用。
+            start(controller) {
+                // 向控制器发送"Hello World"的UTF-8编码字节。
+                controller.enqueue(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
+                controller.enqueue(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
+                controller.close(); // 关闭控制器，表示没有更多的数据需要发送。
+            },
+
+            // 当流需要更多数据时调用的处理逻辑。
+            // 此处使用pull方法，因为start方法在流开始时调用，而pull方法在流需要更多数据时调用。
+            pull(controller) {
+                // 向控制器发送"Hello World"的UTF-8编码字节，此逻辑在本例中与start方法相同。
+                controller.enqueue(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
+                controller.enqueue(new Uint8Array([72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]));
+                controller.close(); // 关闭控制器，表示没有更多的数据需要发送。
+            },
+
+            // 流被取消时的处理逻辑。
+            // 此处使用cancel方法，因为start方法在流开始时调用，而cancel方法在流被取消时调用。
+            cancel(reason) {
+                console.log("cancel", reason); // 打印取消操作和原因。
+            }
+        });
+
+
+        const compressionStream = new CompressionStream("gzip");
+        // 假设inputReadableStream是一个可读流，包含了我们想要压缩的数据
+        const compressedReadableStream = inputReadableStream
+            .pipeThrough({readable:compressionStream.readable, writable:compressionStream.writable});
+
+        // 使用CompressionStream.readable属性获取可读流
+        const reader = compressedReadableStream.getReader();
+
+        // 读取压缩后的数据
+        async function readCompressedData() {
+            let {done, value} = await reader.read();
+            while (!done) {
+                const textDecoder = new TextDecoder();
+                console.log(value); // 处理压缩后的数据块
+                console.log(textDecoder.decode(value));
+                ({done, value} = await reader.read());
+            }
+            console.log('压缩数据读取完毕');
+        }
+
+        // 调用函数读取数据
+        readCompressedData();
+
+
+    })
+</script>
+</body>
+</html>

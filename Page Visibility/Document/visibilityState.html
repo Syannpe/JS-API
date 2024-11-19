@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="module">
+    document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("visibilitychange", () => {
+            console.log(document.visibilityState)
+
+            if (document.hidden) {
+                console.log("hidden")
+                // Page is hidden. Pause audio playback
+            } else {
+                console.log("visible")
+                // Page became visible! Resume playing if audio was "playing on hide"
+
+            }
+        });
+    })
+</script>
+</body>
+</html>

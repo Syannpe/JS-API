@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个ByteLengthQueuingStrategy实例，设置highWaterMark为1024字节
+        const queuingStrategy = new ByteLengthQueuingStrategy({
+            highWaterMark: 1024,
+            // size: chunk => chunk.length
+        });
+
+        // 使用ByteLengthQueuingStrategy创建一个可读流
+        const readableStream = new ReadableStream({
+            start(controller) {
+                // 初始化时的逻辑
+            },
+            pull(controller) {
+                // 每次拉取数据时的逻辑
+            },
+            cancel(err) {
+                console.error("stream error:", err);
+            }
+        }, queuingStrategy);
+
+        // 使用queuingStrategy的size方法来获取chunk的字节长度
+        const size = queuingStrategy.size(new ArrayBuffer(1024));
+        console.log(size)
+
+    })
+</script>
+</body>
+</html>

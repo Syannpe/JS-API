@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="default-stylesheet.css"/>
+    <style></style>
+</head>
+<body>
+prerender.html
+<script type="module">
+    console.log("prerender");
+    if (document.prerendering) {
+        fetch("/test");
+        console.log("got this far during prerendering!");
+        document.addEventListener("prerenderingchange", initAnalytics, {
+            once: true,
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        console.log("next")
+    })
+</script>
+</body>
+</html>

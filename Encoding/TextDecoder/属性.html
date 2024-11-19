@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style></style>
+</head>
+<body>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // 创建一个TextDecoder实例，默认使用'utf-8'编码
+        let utf8decoder = new TextDecoder();
+
+        // 使用TextDecoder的属性
+        console.log("编码方式: " + utf8decoder.encoding); // utf-8
+        console.log("错误模式是否为致命: " + utf8decoder.fatal); // false
+        console.log("是否忽略字节顺序标记(BOM): " + utf8decoder.ignoreBOM); // false
+
+    })
+</script>
+</body>
+</html>
