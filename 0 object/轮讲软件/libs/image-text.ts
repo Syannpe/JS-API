@@ -8,6 +8,8 @@ class ImageText extends HTMLElement {
     public tags: IText[] = [];
 
     public fullscreen(e: MouseEvent) {
+        this.resize();
+
         if (document.fullscreenElement === this) {
             document.exitFullscreen();
             return;
@@ -19,12 +21,16 @@ class ImageText extends HTMLElement {
 
     public resize() {
         // console.log("resize invoked")
+        const that: this = this;
 
-        const that: ImageText = this;
-        this.tags.forEach(function (tag) {
-            tag.containerSize = [that.image.width, that.image.height];
-            tag.resetPos();
-        })
+        setTimeout(function () {
+            const rect = that.getBoundingClientRect();
+
+            that.tags.forEach(function (tag) {
+                tag.containerSize = [rect.width, rect.height];
+                tag.resetPos();
+            })
+        }, 0);
     };
 
     /*
@@ -65,19 +71,22 @@ class ImageText extends HTMLElement {
     private isStickyed = false
 
     public imageSticky() {
-        this.classList.toggle("sticky");
-        if(this.isStickyed){
-            const that = this;
-            const cb = function (){
+        const that = this;
+
+        // @ts-ignore
+        document.startViewTransition(() => this.classList.toggle("sticky"));
+
+        if (this.isStickyed) {
+            const cb = function () {
                 that.tags.forEach(tag => {
                     tag.style.display = "block"
                 })
 
-                that.removeEventListener("transitionend",cb)
+                that.removeEventListener("transitionend", cb)
                 that.isStickyed = false;
             }
-            this.addEventListener("transitionend",cb)
-        }else{
+            this.addEventListener("transitionend", cb)
+        } else {
             this.tags.forEach(tag => {
                 tag.style.display = "none"
             })
@@ -101,19 +110,32 @@ class ImageText extends HTMLElement {
         this.image = this.querySelector("img");
         this.tags = Array.from(this.querySelectorAll("i-text"));
 
-        const imageSize = this.image.getBoundingClientRect();
-        this.tags.forEach(text => {
-            text.containerSize = [imageSize.width, imageSize.height];
-            if (text.mode === TextMode.ver) {
-                text.classList.add("vertical")
-            }
-            text.resetPos();
-        });
+        const init = (function () {
+            const imageSize = this.image.getBoundingClientRect();
 
-        this.initInvertImage();
-        this.initStickyBtn();
-        this.addEventListener("dblclick", this.fullscreen);
-        window.addEventListener("resize", this.resize.bind(this));
+            this.style.setProperty("--image-width", imageSize.width + 'px');
+            this.style.setProperty("--image-height", imageSize.height + 'px');
+
+            const rect = this.getBoundingClientRect();
+
+            this.tags.forEach((text: IText) => {
+                text.containerSize = [rect.width, rect.height];
+                if (text.mode === TextMode.ver) {
+                    text.classList.add("vertical")
+                }
+                text.resetPos();
+            });
+
+            this.initInvertImage();
+            this.initStickyBtn();
+            this.addEventListener("dblclick", this.fullscreen);
+            window.addEventListener("resize", this.resize.bind(this));
+        }).bind(this);
+
+
+        this.image.onload = init;
+        if (this.image.complete) init();
+
     }
 }
 
@@ -141,9 +163,7 @@ class IText extends HTMLElement {
         const width = this.width > 1 ? this.width : this.width * this.containerSize[0];
         const height = this.height > 1 ? this.height : this.height * this.containerSize[1];
 
-        /*const transformObj = TransformParser.parseTransform(this.style.transform);
-        transformObj.translate = [x + "px", y + "px"];
-        this.style.transform = TransformParser.stringifyTransform(transformObj);*/
+
         this.style.transform = `translate(${x}px, ${y}px)`;
 
         this.style.width = width + "px";
@@ -164,8 +184,6 @@ class IText extends HTMLElement {
             this.isClicked = false;
             return;
         }
-        // this.style.width = Number.parseInt(this.style.width) * 1.3 + "px";
-        // this.style.height = Number.parseInt(this.style.height) * 1.3 + "px";
 
         if (this.mode === TextMode.hor)
             this.style.overflowY = "scroll";

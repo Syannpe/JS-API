@@ -1,11 +1,20 @@
 class AnimeDetails extends HTMLDetailsElement {
     constructor() {
         super();
+
+        const summary = this.querySelector("summary");
+        for (let i = 0; i < summary.children.length; i++) {
+            if ("style" in summary.children[i]) {
+                // @ts-ignore
+                summary.children[i].style.display = "inline-block";
+            }
+        }
+
         /*
         * 把details元素展开和收回的尺寸进行测量并记录
         * 赋值给CSS属性用于CSS样式
         * */
-        const that:this = this;
+        const that: this = this;
         setTimeout(function () {
             that.style.setProperty("--close-height", getComputedStyle(that).height);
             that.open = true;

@@ -270,6 +270,11 @@ class ImageTile extends HTMLElement {
         });
     }
 
+    public resizeCB(){
+        this.svgCanvas.innerHTML = "";
+
+        this.initTile();
+    }
 
     constructor() {
         super();
@@ -302,6 +307,7 @@ class ImageTile extends HTMLElement {
         this.initSVGCanvas();
         this.initTileContent();
         this.initTile();
+        window.addEventListener("resize", this.resizeCB.bind(this));
     }
 }
 

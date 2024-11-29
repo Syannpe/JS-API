@@ -9,78 +9,75 @@
 </head>
 <body>
 <h1>实验</h1>
-<details is="anime-details">
-    <summary>内容</summary>
-    <h2>数据集</h2>
-    <image-tile height="250">
-        <div class="tile-content">
-            <p>三个<strong>数据集</strong>：CUHK-PEDES、ICFG-PEDES、RST-PReid</p>
-        </div>
-        <span pos=".45 .46"
-              tar=".1 .35">香港中文大学的人像检索文本-图像数据集，包含 40206 张图像以及 80412 条文本描述</span>
-        <span pos=".55 .46">从MSMT-17数据集中收集的，包含 54522 幅图像的54522条文本描述，涉及4102个人</span>
-    </image-tile>
+<h2>数据集</h2>
+<image-tile height="250">
+    <div class="tile-content">
+        <p>三个<strong>数据集</strong>：CUHK-PEDES、ICFG-PEDES、RST-PReid</p>
+    </div>
+    <span pos=".45 .46"
+          tar=".1 .35">香港中文大学的人像检索文本-图像数据集，包含 40206 张图像以及 80412 条文本描述</span>
+    <span pos=".55 .46">从MSMT-17数据集中收集的，包含 54522 幅图像的54522条文本描述，涉及4102个人</span>
+</image-tile>
 
-    <hr/>
-    <h2>具体实施配置</h2>
-    <ul>
-        <li>使用12层的ViT-B/16作为图像编码器，使用12层的BERT-base作为文本编码器</li>
-        <li>图像尺寸：224*224px</li>
-        <li>句子长度：72字符</li>
-        <li>MAM掩码率：0.8</li>
-        <li>NDF损失超参：0.02</li>
-        <li>总损失函数权重：0.1</li>
-    </ul>
-    <hr/>
-    <h2>实验表1</h2>
-    <image-text>
-        <img src="test-images/表1.png"/>
-        <i-text mode="hor" rect="0.05 .9 .9 .1">
-            CADA显著提升了Rank-1准确率和mAP，超越IRRA，证明其有效学习跨模态关联与缩小模态差距。
-        </i-text>
-    </image-text>
-    <hr/>
-    <h2>实验表2</h2>
-    <image-text>
-        <img src="test-images/表1.png"/>
-        <i-text mode="hor" rect="0.05 .9 .9 .1">
-            CADA在局部匹配中显著超越其他方法，有效克服背景和光照差异，提升跨模态关联学习。
-        </i-text>
-    </image-text>
+<hr/>
+<h2>具体实施配置</h2>
+<ul>
+    <li>使用12层的ViT-B/16作为图像编码器，使用12层的BERT-base作为文本编码器</li>
+    <li>图像尺寸：224*224px</li>
+    <li>句子长度：72字符</li>
+    <li>MAM掩码率：0.8</li>
+    <li>NDF损失超参：0.02</li>
+    <li>总损失函数权重：0.1</li>
+</ul>
+<hr/>
+<h2>实验表1</h2>
+<image-text>
+    <img src="test-images/表1.png"/>
+    <i-text mode="hor" rect="0.05 .9 .9 .1">
+        CADA显著提升了Rank-1准确率和mAP，超越IRRA，证明其有效学习跨模态关联与缩小模态差距。
+    </i-text>
+</image-text>
+<hr/>
+<h2>实验表2</h2>
+<image-text>
+    <img src="test-images/表1.png"/>
+    <i-text mode="hor" rect="0.05 .9 .9 .1">
+        CADA在局部匹配中显著超越其他方法，有效克服背景和光照差异，提升跨模态关联学习。
+    </i-text>
+</image-text>
 
-    <hr/>
-    <h2>实验表3</h2>
-    <image-text>
-        <img src="test-images/表1.png"/>
-        <i-text mode="hor" rect="0.05 .9 .9 .1">
-            CADA在RSTPReid上显著超越现有方法，Rank-1和mAP分别领先IRRA和CFine较大幅度。
-        </i-text>
-    </image-text>
+<hr/>
+<h2>实验表3</h2>
+<image-text>
+    <img src="test-images/表1.png"/>
+    <i-text mode="hor" rect="0.05 .9 .9 .1">
+        CADA在RSTPReid上显著超越现有方法，Rank-1和mAP分别领先IRRA和CFine较大幅度。
+    </i-text>
+</image-text>
 
-    <hr/>
-    <h2>消融实验</h2>
-    <image-text>
-        <img src="test-images/表1.png"/>
-        <i-text mode="hor" rect="0.05 .9 .9 .1">
-            CADA在RSTPReid上显著超越现有方法，Rank-1和mAP分别领先IRRA和CFine较大幅度。
-        </i-text>
-    </image-text>
-    <p>1->3,1->4：可以说明ATP的有效性，前者是全局有效性，后者是局部
-        1->2,3->5,4->6：可以说明ARA的有效性
-    </p>
+<hr/>
+<h2>消融实验</h2>
+<image-text>
+    <img src="test-images/表1.png"/>
+    <i-text mode="hor" rect="0.05 .9 .9 .1">
+        CADA在RSTPReid上显著超越现有方法，Rank-1和mAP分别领先IRRA和CFine较大幅度。
+    </i-text>
+</image-text>
+<p>1->3,1->4：可以说明ATP的有效性，前者是全局有效性，后者是局部
+    1->2,3->5,4->6：可以说明ARA的有效性
+</p>
 
-    <hr/>
-    <h2>在CUHK-PEDES数据集上的超参变化测试</h2>
-    <image-text>
-        <img src="test-images/公式.png"/>
-    </image-text>
-    <p>为了降低计算成本，我们在局部匹配时<strong>只选择全局相似度最高的前η个图像</strong>，
-        使复杂度从O(MN)降至O(M + ηN)。实验表明，设置<strong>较低的η值</strong>（如32或<10）
-        显著<strong>提升了匹配精度并节省计算成本</strong>，CADA在这种情况下仍优于其他方法，展现出模型的高效性。
-    </p>
-</details>
+<hr/>
+<h2>在CUHK-PEDES数据集上的超参变化测试</h2>
+<image-text>
+    <img src="test-images/公式.png"/>
+</image-text>
+<p>为了降低计算成本，我们在局部匹配时<strong>只选择全局相似度最高的前η个图像</strong>，
+    使复杂度从O(MN)降至O(M + ηN)。实验表明，设置<strong>较低的η值</strong>（如32或<10）
+    显著<strong>提升了匹配精度并节省计算成本</strong>，CADA在这种情况下仍优于其他方法，展现出模型的高效性。
+</p>
 
-<hr />
+<hr/>
 <h1>结论</h1>
 <h6>
     CADA框架通过全局关联和自适应双关联模块

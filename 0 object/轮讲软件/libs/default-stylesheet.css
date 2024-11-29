@@ -1,5 +1,5 @@
 @media (prefers-color-scheme: dark) {
-    *{
+    * {
         filter: invert(1);
     }
 }
@@ -17,6 +17,9 @@ body {
 img {
     display: block; /* 移除内联元素默认间隙 */
     max-width: 100%; /* 保证图片不会超出容器宽度 */
+    max-height: 100vh;
+    width: auto;
+
     box-sizing: border-box;
     height: auto; /* 保持图片比例 */
     border-radius: 12px; /* 圆角边框 */
@@ -157,8 +160,10 @@ details {
     border-radius: 5px;
     padding: 10px;
     margin: 10px 0;
+    /*max-height: min(100vh, var(--open-height));*/
+
     box-shadow: 0 2px 5px rgba(102, 51, 153, 0.3);
-    overflow: hidden;
+    overflow: auto;
     text-indent: 2em;
     transition: .3s;
 }
