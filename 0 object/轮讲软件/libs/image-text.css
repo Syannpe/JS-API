@@ -1,0 +1,113 @@
+image-text,
+image-text > * {
+    /*border: red solid 1px;*/
+    transition: .3s;
+
+}
+
+image-text {
+    display: grid;
+    width: 100%;
+    height: auto;
+    margin: 20px auto;
+    background-image: linear-gradient(to bottom, #fff, #fff); /* 替换为动态生成的图片 */
+    background-size: contain;
+    background-position: center;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+image-text > img {
+    grid-area: 1/1;
+    height: 100%;
+    width: 100%;
+    border-radius: 10px;
+}
+
+image-text > i-text {
+    display: block;
+    grid-area: 1/1;
+
+    padding: 10px;
+    border: #639 dashed 3px;
+    border-radius: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1rem;
+    /*mix-blend-mode: difference;*/
+    transition: .3s;
+
+
+    /* 设置文字背景图片 */
+    background-image: inherit;
+
+    /* 文字仅显示背景 */
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+
+}
+
+image-text > i-text:hover {
+    background-clip: border-box;
+    background-image: none;
+    background-color: #639;
+    color: #eee;
+    cursor: pointer;
+}
+
+image-text > i-text.actived {
+    background-clip: border-box;
+    background-image: none;
+    background-color: #639;
+    color: #eee;
+    cursor: pointer;
+}
+
+image-text > i-text.vertical {
+    writing-mode: vertical-rl;
+    text-combine-upright: none;
+    /*overflow-x: auto;*/
+}
+
+image-text > button.sticky {
+    grid-area: 1/1;
+
+    position: relative;
+    top: 10%;
+    left: 90%;
+    z-index: 1;
+    opacity: .2;
+    transform: translate(-100%, 0);
+
+    height: min-content;
+    width: min-content;
+    border-radius: 10px;
+    background-color: #639;
+    color: white;
+    padding: 10px;
+    line-height: 1.2rem;
+    cursor: pointer;
+    transition: .3s;
+}
+
+image-text > button.sticky:hover {
+    opacity: 1;
+}
+
+image-text.sticky {
+    position: sticky;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 50%;
+    margin: 20px 0 20px auto;
+}
+image-text.sticky>img{
+    z-index: 1;
+
+}
+/*
+image-text.sticky>i-text{
+    display: none;
+}*/

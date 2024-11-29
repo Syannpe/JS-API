@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="libs/default-stylesheet.css"/>
+    <link rel="stylesheet" href="libs/image-text.css"/>
+    <link rel="stylesheet" href="libs/image-tile.css"/>
+</head>
+<body>
+<details is="anime-details">
+    <summary>title</summary>
+    <p>content</p>
+</details>
+
+<image-text>
+    <img src="test-images/公式.png"/>
+    <i-text mode="hor" rect=".3 .2 .1 .1">第一个文本框</i-text>
+    <i-text rect=".5 .6 .2 .3">第二个文本框</i-text>
+</image-text>
+
+<image-text>
+    <img src="test-images/公式2.png"/>
+    <i-text mode="hor" rect=".3 .2 .1 .1">第一个文本框</i-text>
+    <i-text rect=".5 .6 .2 .3">第二个文本框</i-text>
+</image-text>
+
+<image-tile>
+    <div class="tile-content"><img src="test-images/结构图.png"></div>
+    <span pos=".5 .3">第一条注释</span>
+    <span pos=".4 .4">第二条注释</span>
+    <span pos=".5 .7">第三条注释</span>
+</image-tile>
+<image-tile height="300">
+    <div class="tile-content"><img src="test-images/公式.png"></div>
+
+    <span pos=".5 .3">第一条注释</span>
+    <span pos=".4 .4">第二条注释</span>
+</image-tile>
+
+<script type="module">
+    import {AnimeDetails} from "./libs/anime-details.js";
+    import {ImageText} from "./libs/image-text.js";
+    import {ImageTile} from "./libs/image-tile.js";
+</script>
+</body>
+</html>
