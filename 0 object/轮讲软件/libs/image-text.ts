@@ -8,19 +8,17 @@ class ImageText extends HTMLElement {
     public tags: IText[] = [];
 
     public fullscreen(e: MouseEvent) {
-        this.resize();
-
         if (document.fullscreenElement === this) {
             document.exitFullscreen();
-            return;
+        } else if (!document.fullscreenElement){
+            // 申请全屏
+            this.requestFullscreen();
         }
-        // 申请全屏
-        this.requestFullscreen();
 
+        this.resize();
     }
 
     public resize() {
-        // console.log("resize invoked")
         const that: this = this;
 
         setTimeout(function () {
